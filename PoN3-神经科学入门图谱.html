@@ -1,0 +1,1590 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>神经科学入门图谱</title>
+<meta name="description" content="根据 PoN3 本学期 22 讲课件整理的交互式神经科学知识图谱">
+<script>try{var t=localStorage.getItem('pon3-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-scheme',t);}catch(e){}</script>
+<style>
+:root{
+  --page:#EDEFF4; --sheet:#FFFFFF; --sheet-2:#F4F5F9; --ink:#171A2B; --ink-2:#464B61; --ink-3:#757B91; --rule:#D6D9E3; --rule-2:#E6E8EF; --focus:#3556D8;
+  --c-basic:#2D5BD2; --c-plast:#0F7E47; --c-inhib:#C92C3B; --c-dev:#8F6400; --c-mem:#8B34BE; --c-reward:#B5540B; --c-sys:#077D98; --c-degen:#BB2A73; --c-method:#596174;
+  --g-basic:#5E8DFF; --g-plast:#3EDC88; --g-inhib:#FF5D67; --g-dev:#FFD042; --g-mem:#C776FF; --g-reward:#FF9B42; --g-sys:#3FD4F3; --g-degen:#FF72B9; --g-method:#AEB6C8;
+  --field:#04060C; --field-ink:#DCE3F4; --field-ink-2:#93A0BF; --field-line:rgba(150,170,235,.17); --field-line-hi:rgba(228,234,255,.82); --field-glass:rgba(13,18,31,.86); --field-border:rgba(255,255,255,.13);
+  --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei UI","Microsoft YaHei","Noto Sans SC","Noto Sans CJK SC","Source Han Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --latin:"Palatino Linotype","Book Antiqua",Palatino,"Iowan Old Style","URW Palladio L",P052,Georgia,serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-scheme="light"]){
+    --page:#0E1119; --sheet:#151923; --sheet-2:#1B202C; --ink:#E7EAF2; --ink-2:#B1B7C8; --ink-3:#7E8599; --rule:#2A3142; --rule-2:#212735; --focus:#8EA6FF;
+    --c-basic:#7FA4FF; --c-plast:#5BE09A; --c-inhib:#FF7B84; --c-dev:#FFD45E; --c-mem:#D394FF; --c-reward:#FFAB62; --c-sys:#62DCF4; --c-degen:#FF8BC5; --c-method:#B6BDCC;
+    color-scheme:dark;
+  }
+}
+:root[data-scheme="dark"]{
+  --page:#0E1119; --sheet:#151923; --sheet-2:#1B202C; --ink:#E7EAF2; --ink-2:#B1B7C8; --ink-3:#7E8599; --rule:#2A3142; --rule-2:#212735; --focus:#8EA6FF;
+  --c-basic:#7FA4FF; --c-plast:#5BE09A; --c-inhib:#FF7B84; --c-dev:#FFD45E; --c-mem:#D394FF; --c-reward:#FFAB62; --c-sys:#62DCF4; --c-degen:#FF8BC5; --c-method:#B6BDCC;
+  color-scheme:dark;
+}
+.t-basic{--tc:var(--c-basic);--tg:var(--g-basic)} .t-plast{--tc:var(--c-plast);--tg:var(--g-plast)} .t-inhib{--tc:var(--c-inhib);--tg:var(--g-inhib)}
+.t-dev{--tc:var(--c-dev);--tg:var(--g-dev)} .t-mem{--tc:var(--c-mem);--tg:var(--g-mem)} .t-reward{--tc:var(--c-reward);--tg:var(--g-reward)}
+.t-sys{--tc:var(--c-sys);--tg:var(--g-sys)} .t-degen{--tc:var(--c-degen);--tg:var(--g-degen)} .t-method{--tc:var(--c-method);--tg:var(--g-method)}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--page);color:var(--ink);font:15px/1.72 var(--sans)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{cursor:default;opacity:.4}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+sub{font-size:.72em;line-height:0}
+.en{font-family:var(--latin);font-style:italic;font-weight:400}
+.sw{display:inline-block;width:.6em;height:.6em;border-radius:50%;background:var(--tc,var(--ink-3));margin-right:.5em;flex:none;position:relative;top:-.04em}
+.wrap{max-width:1420px;margin:0 auto;padding:0 24px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* intro */
+.intro{display:flex;justify-content:space-between;align-items:flex-end;gap:16px 32px;padding:30px 0 18px;flex-wrap:wrap}
+.intro h1{margin:0;font-size:clamp(28px,3.4vw,40px);line-height:1.12;font-weight:700;letter-spacing:-.02em}
+.intro .sub{margin:6px 0 0;font-size:clamp(16px,1.5vw,19px);color:var(--ink-2)}
+.intro .lede{margin:10px 0 0;color:var(--ink-2);max-width:42em}
+.jump{display:flex;flex-wrap:wrap;gap:2px;align-items:center}
+.jump a,.jump button{padding:6px 11px;border-radius:8px;font-size:14px;color:var(--ink-2);text-decoration:none;background:none;border:1px solid transparent}
+.jump a:hover,.jump button:hover{color:var(--ink);background:var(--sheet)}
+.jump button{border-color:var(--rule);margin-left:6px}
+
+/* map */
+.map{display:grid;grid-template-columns:minmax(0,1fr) clamp(320px,27vw,400px);height:clamp(580px,calc(100vh - 140px),900px);border:1px solid var(--rule);border-radius:14px;overflow:hidden;background:var(--sheet);scroll-margin-top:12px}
+.scope{position:relative;min-width:0;overflow:hidden;color:var(--field-ink);background:radial-gradient(ellipse 75% 70% at 50% 46%,#0A1121 0%,#05080F 58%,var(--field) 100%)}
+#graph{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+#graph.grabbing{cursor:grabbing}
+.bar{position:absolute;left:12px;right:12px;display:flex;gap:8px;align-items:center;z-index:2;pointer-events:none}
+.bar>*{pointer-events:auto}
+.bar-top{top:12px}
+.bar-bottom{bottom:12px;align-items:flex-end}
+.spacer{flex:1;pointer-events:none}
+.fbtn{height:36px;padding:0 13px;border-radius:9px;border:1px solid var(--field-border);background:var(--field-glass);color:var(--field-ink);font-size:14px;white-space:nowrap;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.fbtn:hover{border-color:rgba(255,255,255,.32)}
+.fbtn[aria-pressed="true"]{background:var(--field-ink);color:#070A12;border-color:var(--field-ink)}
+.search{position:relative;flex:0 1 330px;min-width:0}
+.search input{width:100%;height:36px;border-radius:9px;border:1px solid var(--field-border);background:var(--field-glass);color:var(--field-ink);padding:0 12px 0 34px;font-size:14px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.search input::placeholder{color:var(--field-ink-2)}
+.search input:focus{outline:none;border-color:rgba(255,255,255,.5)}
+.search .icon{position:absolute;left:11px;top:10px;width:16px;height:16px;fill:none;stroke:var(--field-ink-2);stroke-width:2;stroke-linecap:round;pointer-events:none}
+.results{position:absolute;top:42px;left:0;width:max(100%,300px);margin:0;padding:5px;list-style:none;background:#0D1222;border:1px solid var(--field-border);border-radius:10px;box-shadow:0 14px 34px rgba(0,0,0,.5);max-height:340px;overflow:auto}
+.results li{display:flex;align-items:baseline;gap:8px;padding:7px 9px;border-radius:7px;cursor:pointer;font-size:14px;line-height:1.4}
+.results li.active,.results li:hover{background:rgba(255,255,255,.09)}
+.results .sw{background:var(--tg)}
+.results .en{margin-left:auto;color:var(--field-ink-2);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55%}
+.results li.none{color:var(--field-ink-2);cursor:default;background:none}
+.channels{display:flex;flex-wrap:wrap;gap:3px;padding:4px;border-radius:10px;background:var(--field-glass);border:1px solid var(--field-border);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);min-width:0}
+.ch{display:flex;align-items:center;gap:7px;border:0;background:none;color:var(--field-ink);padding:5px 10px;border-radius:7px;font-size:13px;white-space:nowrap;line-height:1.25}
+.ch:hover{background:rgba(255,255,255,.08)}
+.ch .led{width:8px;height:8px;border-radius:50%;background:var(--tg);box-shadow:0 0 0 3px rgba(255,255,255,.06),0 0 9px var(--tg)}
+.ch[aria-pressed="true"]{background:rgba(255,255,255,.14)}
+.channels.solo .ch[aria-pressed="false"]{opacity:.42}
+.channels.solo .ch[aria-pressed="false"] .led{box-shadow:none}
+.zoom{display:flex;border-radius:9px;overflow:hidden;border:1px solid var(--field-border);background:var(--field-glass);flex:none}
+.zoom button{width:36px;height:34px;border:0;background:none;color:var(--field-ink);font-size:17px;line-height:1}
+.zoom button+button{border-left:1px solid var(--field-border)}
+.zoom button:hover{background:rgba(255,255,255,.09)}
+.peek{display:none}
+
+/* graph marks */
+.edge{stroke:var(--field-line);stroke-width:1;vector-effect:non-scaling-stroke;transition:opacity .3s}
+.edge.dim{opacity:.15}
+.edge.hl{stroke:var(--field-line-hi);stroke-width:1.5}
+.hidden{display:none}
+.node{cursor:pointer;transition:opacity .35s}
+.node .halo{fill:var(--tg);opacity:.16}
+.node .core{fill:var(--tg);stroke:rgba(255,255,255,.5);stroke-width:.8;vector-effect:non-scaling-stroke}
+.node.l1 .core{stroke:rgba(255,255,255,.82);stroke-width:1.1}
+.node .lbl{fill:#C9D1E6;text-anchor:middle;dominant-baseline:hanging;paint-order:stroke;stroke:#04060C;stroke-width:var(--sw,3px);stroke-linejoin:round}
+.node.l1 .lbl{font-size:1.08em;font-weight:600;fill:#EEF2FC}
+.node.l2 .lbl{font-size:.94em}
+.node.l3 .lbl{font-size:.86em;fill:#9AA5C2}
+#graph[data-z="over"] .node:not(.hl):not(.sel) .lbl,#graph[data-z="far"] .node.l2:not(.hl):not(.sel) .lbl,#graph[data-z="far"] .node.l3:not(.hl):not(.sel) .lbl,#graph[data-z="mid"] .node.l3:not(.hl):not(.sel) .lbl{visibility:hidden}
+#graph[data-z="over"] .tlabel:not(.dim){opacity:.78}
+.node.dim{opacity:.12}
+.node.hl .lbl{fill:#F4F7FF}
+.node.sel .core{stroke:#fff;stroke-width:2.4}
+.node.sel .halo{opacity:.45}
+.node.pre{opacity:0}
+.g-edges,.g-themes{transition:opacity .9s ease}
+.g-edges.pre,.g-themes.pre{opacity:0}
+.elabel{font-size:.76em;fill:#E9EEFF;text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke:#04060C;stroke-width:var(--sw,3px);stroke-linejoin:round;pointer-events:none}
+.tlabel{font-size:1.5em;font-weight:700;fill:var(--tg);opacity:.4;text-anchor:middle;dominant-baseline:central;pointer-events:none;letter-spacing:.06em;transition:opacity .3s}
+.tlabel.dim{opacity:.09}
+
+/* panel */
+.panel{min-width:0;overflow-y:auto;padding:22px 22px 30px;border-left:1px solid var(--rule);background:var(--sheet);overscroll-behavior:contain}
+.panel h2:focus{outline:none}
+.pn-theme{display:inline-flex;align-items:center;border:0;background:none;padding:0;font-size:13px;font-weight:600;color:var(--tc)}
+.pn-theme:hover{text-decoration:underline;text-underline-offset:3px}
+.pn-title{font-size:23px;line-height:1.3;margin:6px 0 2px;letter-spacing:-.01em}
+.pn-title .sw{width:.5em;height:.5em}
+.pn-en{margin:0 0 14px;font-size:16.5px;color:var(--ink-2);line-height:1.4}
+.pn-desc{margin:0 0 10px}
+.pn-pts{margin:0;padding-left:1.15em}
+.pn-pts li{margin:5px 0;color:var(--ink-2);font-size:14.5px}
+.pn-pts li::marker{color:var(--tc)}
+.pn-h{font-size:13px;font-weight:600;color:var(--ink-3);margin:22px 0 8px}
+.lecs{display:flex;flex-wrap:wrap;gap:6px}
+.lec{border:1px solid var(--rule);background:var(--sheet);border-radius:7px;padding:3px 9px;font-size:13px;color:var(--ink-2);text-align:left;line-height:1.5}
+.lec b{color:var(--ink);margin-right:5px;font-variant-numeric:tabular-nums}
+.lec:hover{border-color:var(--ink-3);color:var(--ink)}
+.rels{list-style:none;margin:0 -8px;padding:0}
+.rels button{display:grid;grid-template-columns:1.1em minmax(0,1fr);column-gap:6px;width:100%;text-align:left;border:0;background:none;padding:6px 8px;border-radius:8px;line-height:1.45}
+.rels button:hover{background:var(--sheet-2)}
+.rels .dir{color:var(--ink-3);grid-row:1/span 2}
+.rels .nm{display:flex;align-items:center;font-weight:600;font-size:14.5px}
+.rels .lb{color:var(--ink-3);font-size:13px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:4px 15px;border-radius:9px;border:1px solid var(--rule);background:var(--sheet);font-size:14px;color:var(--ink)}
+.btn:hover:not(:disabled){border-color:var(--ink-3)}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
+.btn.primary:hover{opacity:.88}
+.textbtn{border:0;background:none;padding:0;font-size:14px;color:var(--ink);text-decoration:underline;text-decoration-color:var(--ink-3);text-underline-offset:3px}
+.textbtn:hover{text-decoration-color:var(--ink)}
+.tour{border:1px solid var(--rule);border-radius:11px;background:var(--sheet-2);padding:12px 14px 14px;margin-bottom:20px}
+.tour-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--ink-2)}
+.tour-bar{height:3px;border-radius:3px;background:var(--rule);margin:8px 0 10px;overflow:hidden}
+.tour-bar i{display:block;height:100%;background:var(--ink);border-radius:3px}
+.tour-note{margin:0 0 12px;font-size:14.5px}
+.tour-nav{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;border:1px solid var(--rule);background:var(--sheet);border-radius:999px;padding:3px 11px;font-size:13px;color:var(--ink-2);line-height:1.5}
+.chip:hover{border-color:var(--tc,var(--ink-3));color:var(--ink)}
+.chip.l1{color:var(--ink);font-weight:600}
+.pw-title{font-size:22px;margin:0 0 8px}
+.pw p{margin:0 0 16px;color:var(--ink-2)}
+.pw-list{margin:0;padding-left:1.15em;color:var(--ink-2);font-size:14.5px}
+.pw-list li{margin:4px 0}
+.chain{margin:0;padding-left:1.5em}
+.chain li{margin:1px 0;color:var(--ink-3)}
+.chain button{border:0;background:none;padding:3px 0;display:inline-flex;align-items:center;font-size:14.5px;color:var(--ink)}
+.chain button:hover{text-decoration:underline;text-underline-offset:3px}
+.pn-foot{margin-top:22px}
+
+/* sections */
+.section{padding:76px 0 0;scroll-margin-top:8px}
+.section>h2{font-size:clamp(23px,2.5vw,30px);line-height:1.25;margin:0 0 8px;letter-spacing:-.01em}
+.section-lede{margin:0 0 24px;color:var(--ink-2);max-width:44em}
+
+.raster-box{border:1px solid var(--rule);border-radius:12px;background:var(--sheet);padding:14px 16px 12px}
+.raster-scroll{overflow-x:auto}
+.raster{display:grid;grid-template-columns:7.8em repeat(var(--cols),minmax(26px,1fr));min-width:760px}
+.rs-col{border:0;background:none;font-size:12px;color:var(--ink-3);padding:2px 0 6px;font-variant-numeric:tabular-nums;border-radius:6px 6px 0 0}
+.rs-col:hover,.rs-col.on{color:var(--ink);background:var(--sheet-2)}
+.rs-row{display:flex;align-items:center;border:0;background:none;padding:0 8px 0 0;font-size:13px;color:var(--ink-2);white-space:nowrap;text-align:left;height:30px}
+.rs-row:hover{color:var(--ink)}
+.rs-cell{position:relative;height:30px;border-top:1px solid var(--rule-2);cursor:pointer}
+.rs-cell.on{background:var(--sheet-2)}
+.rs-cell .tick{position:absolute;left:50%;bottom:4px;width:3px;margin-left:-1.5px;height:calc(var(--h)*22px);border-radius:2px;background:var(--tc)}
+.raster-cap{margin:10px 0 0;font-size:13.5px;color:var(--ink-2);min-height:1.7em}
+.raster-cap b{color:var(--ink)}
+
+.slides{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:28px}
+.slide{display:grid;grid-template-columns:52px minmax(0,1fr);background:var(--sheet);border:1px solid var(--rule);border-radius:7px;overflow:hidden}
+.slide-label{display:flex;flex-direction:column;align-items:center;gap:2px;padding:16px 0;border-right:1px solid var(--rule);background:var(--sheet-2);background:color-mix(in srgb,var(--tc) 12%,var(--sheet));color:var(--tc);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.slide-body{padding:18px 20px 20px;min-width:0}
+.slide h3{margin:0;font-size:19px;line-height:1.35}
+.slide-en{margin:1px 0 10px;color:var(--ink-3);font-size:15.5px}
+.slide .idea{margin:0 0 8px}
+.slide ul{margin:0 0 14px;padding-left:1.15em;color:var(--ink-2);font-size:14px}
+.slide ul li{margin:3px 0}
+.slide ul li::marker{color:var(--tc)}
+.slide-lecs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+
+.threads{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:36px 48px}
+.thread{border-top:2px solid var(--ink);padding-top:14px}
+.thread h3{margin:0 0 6px;font-size:18.5px}
+.thread p{margin:0 0 14px;color:var(--ink-2);font-size:14.5px}
+.path{display:flex;flex-wrap:wrap;align-items:center;row-gap:8px;margin:0 0 14px}
+.pnode{display:inline-flex;align-items:center;border:1px solid var(--rule);background:var(--sheet);border-radius:999px;padding:3px 11px;font-size:13px;line-height:1.5}
+.pnode:hover{border-color:var(--tc)}
+.pedge{width:16px;height:1.5px;background:var(--ink-3);flex:none}
+
+.quiz{max-width:780px}
+.qfilter{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
+.qf{display:inline-flex;align-items:center;border:1px solid var(--rule);background:var(--sheet);border-radius:999px;padding:4px 12px;font-size:13px;color:var(--ink-2);line-height:1.5}
+.qf:hover{color:var(--ink)}
+.qf[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.flash{perspective:1600px;cursor:pointer;border-radius:14px}
+.flash:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+.flash-inner{display:grid;transition:transform .55s cubic-bezier(.3,.7,.2,1);transform-style:preserve-3d}
+.flash.noanim .flash-inner{transition:none}
+.flash.flipped .flash-inner{transform:rotateY(180deg)}
+.face{grid-area:1/1;min-height:230px;display:flex;flex-direction:column;padding:22px 28px 24px;border:1px solid var(--rule);border-radius:14px;background:var(--sheet);-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.face.back{transform:rotateY(180deg);background:var(--sheet-2)}
+.q-meta{display:flex;align-items:center;font-size:13px;color:var(--tc);font-weight:600;margin:0}
+.q-text{font-size:clamp(18px,2vw,21px);font-weight:600;line-height:1.55;margin:auto 0;padding:18px 0}
+.a-text{font-size:16px;line-height:1.85;margin:auto 0;padding:14px 0}
+.q-hint{margin:0;font-size:13px;color:var(--ink-3)}
+.qnav{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:14px}
+.qpos{min-width:4.6em;text-align:center;color:var(--ink-3);font-variant-numeric:tabular-nums;font-size:14px}
+.qrel{margin:12px 0 0;font-size:14px;color:var(--ink-2);min-height:1.7em}
+
+.gl-tools{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:12px}
+.gl-tools input{height:40px;width:min(420px,100%);border-radius:9px;border:1px solid var(--rule);background:var(--sheet);padding:0 12px;font-size:14.5px}
+.gl-count{font-size:13.5px;color:var(--ink-3)}
+.gl-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+.gl-row{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr) minmax(0,2fr);gap:18px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--rule-2);background:none;padding:10px 8px;align-items:baseline}
+.gl-row:hover{background:var(--sheet)}
+.gl-en{font-size:15.5px;line-height:1.45}
+.gl-zh{display:flex;align-items:center;font-weight:600;font-size:14.5px;line-height:1.45}
+.gl-def{color:var(--ink-2);font-size:13.5px;line-height:1.6}
+.gl-empty{padding:14px 8px;color:var(--ink-3)}
+.abbr-h{font-size:18px;margin:44px 0 10px}
+.abbr{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));column-gap:28px}
+.ab{display:grid;grid-template-columns:6.6em minmax(0,1fr);gap:10px;padding:8px 0;border-bottom:1px solid var(--rule-2);font-size:13.5px;line-height:1.5}
+.ab b{word-break:break-word}
+.ab .en{color:var(--ink-2)}
+footer{padding:64px 0 44px;font-size:13px;color:var(--ink-3);max-width:54em}
+footer p{margin:0 0 6px}
+
+@media (max-width:980px){
+  .map{grid-template-columns:1fr;height:auto}
+  .scope{height:68vh;min-height:460px}
+  .panel{border-left:0;border-top:1px solid var(--rule);overflow:visible}
+  .slides,.threads{grid-template-columns:1fr}
+  .peek:not([hidden]){display:flex;position:absolute;left:10px;right:10px;z-index:3;gap:10px;align-items:center;padding:10px 12px;border-radius:11px;background:var(--field-glass);border:1px solid var(--field-border);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  .peek-text{min-width:0;flex:1;line-height:1.45}
+  .peek-text b{font-size:15px}
+  .peek-text .en{color:var(--field-ink-2);font-size:13px;margin-left:6px}
+  .peek-text p{margin:2px 0 0;font-size:13px;color:var(--field-ink-2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .peek-actions{display:flex;flex-direction:column;gap:6px;flex:none}
+}
+@media (max-width:640px){
+  .wrap{padding:0 16px}
+  .bar{left:8px;right:8px}
+  .bar-top{top:8px;flex-wrap:wrap}
+  .search{flex:1 1 100%}
+  .bar-bottom{bottom:8px}
+  .channels{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(to right,#000 82%,transparent);mask-image:linear-gradient(to right,#000 82%,transparent)}
+  .channels::-webkit-scrollbar{display:none}
+  .ch{padding:5px 8px}
+  .gl-row{grid-template-columns:1fr;gap:2px}
+  .face{padding:18px 18px 20px}
+  .panel{padding:20px 16px 26px}
+  .jump{margin-left:-11px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .flash-inner,.node,.edge,.g-edges,.g-themes,.tlabel{transition:none!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="intro">
+  <div>
+    <h1>神经科学入门图谱</h1>
+    <p class="sub en">A concept map of Principles of Neuroscience 3, spring 2026</p>
+    <p class="lede">本学期 <b data-count="lectures"></b> 讲课件里的 <b data-count="nodes"></b> 个核心概念，和它们之间的 <b data-count="links"></b> 条联系。点任意一个概念开始，或者先走一遍入门路线。</p>
+  </div>
+  <nav class="jump" aria-label="页面导航">
+    <a href="#map">图谱</a><a href="#course">课程全景</a><a href="#threads">主线</a><a href="#quiz">自测</a><a href="#glossary">术语</a>
+    <button type="button" id="modeBtn" data-act="mode">深色</button>
+  </nav>
+</header>
+
+<section id="map" class="map" aria-label="知识图谱">
+  <div class="scope" id="scope">
+    <svg id="graph" role="img" aria-label="概念关系图：节点是概念，连线是概念之间的关系"></svg>
+    <div class="bar bar-top" id="barTop">
+      <div class="search">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+        <input id="q" type="search" placeholder="搜索概念：中文、英文或缩写" autocomplete="off" spellcheck="false" aria-label="搜索概念" aria-controls="qres" aria-expanded="false">
+        <ul class="results" id="qres" role="listbox" hidden></ul>
+      </div>
+      <span class="spacer"></span>
+      <button type="button" class="fbtn" id="tourBtn" data-act="tour-toggle" aria-pressed="false">入门路线</button>
+      <button type="button" class="fbtn" id="coreBtn" data-act="core" aria-pressed="false">只看核心概念</button>
+    </div>
+    <div class="peek" id="peek" hidden>
+      <div class="peek-text"><b id="peekName"></b><span class="en" id="peekEn"></span><p id="peekDesc"></p></div>
+      <div class="peek-actions">
+        <button type="button" class="fbtn" id="peekNext" data-act="tour-next" hidden>下一步</button>
+        <button type="button" class="fbtn" data-act="peek-more">看详情</button>
+      </div>
+    </div>
+    <div class="bar bar-bottom" id="barBottom">
+      <div class="channels" id="channels" role="group" aria-label="按主题查看"></div>
+      <span class="spacer"></span>
+      <div class="zoom">
+        <button type="button" data-act="zoom-in" aria-label="放大">+</button>
+        <button type="button" data-act="zoom-out" aria-label="缩小">−</button>
+        <button type="button" data-act="zoom-fit" aria-label="显示全部">⤢</button>
+      </div>
+    </div>
+  </div>
+  <aside class="panel" id="panel" aria-live="polite"></aside>
+</section>
+<noscript><p>这个页面需要启用 JavaScript 才能显示交互图谱。</p></noscript>
+
+<section id="course" class="section">
+  <h2>课程全景</h2>
+  <p class="section-lede">每一列是一讲，每一行是一个主题；竖线越高，说明这一讲在该主题下涉及的概念越多。点一列，在图谱里只看这一讲。</p>
+  <div class="raster-box">
+    <div class="raster-scroll"><div class="raster" id="raster"></div></div>
+    <p class="raster-cap" id="rasterCap"></p>
+  </div>
+  <div class="slides" id="slides"></div>
+</section>
+
+<section id="threads" class="section">
+  <h2>贯穿全课的六条主线</h2>
+  <p class="section-lede">同一个分子或脑区会在不同的讲里反复出现。把它们串起来，比孤立地背概念更容易记住。</p>
+  <div class="threads" id="threadList"></div>
+</section>
+
+<section id="quiz" class="section">
+  <h2>自测卡片</h2>
+  <p class="section-lede">先自己回答，再翻面核对。可以按主题筛选，也可以打乱顺序。</p>
+  <div class="quiz" id="quizBox">
+    <div class="qfilter" id="qfilter" role="group" aria-label="按主题筛选卡片"></div>
+    <div class="flash" id="flash" role="button" tabindex="0" aria-label="翻面" aria-pressed="false">
+      <div class="flash-inner"><div class="face front" id="qFront"></div><div class="face back" id="qBack" aria-hidden="true"></div></div>
+    </div>
+    <div class="qnav">
+      <button type="button" class="btn" data-act="q-prev">上一张</button>
+      <span class="qpos" id="qPos"></span>
+      <button type="button" class="btn" data-act="q-next">下一张</button>
+      <button type="button" class="btn primary" data-act="q-flip">翻面</button>
+      <button type="button" class="btn" data-act="q-shuffle">打乱顺序</button>
+    </div>
+    <p class="qrel" id="qRel"></p>
+  </div>
+</section>
+
+<section id="glossary" class="section">
+  <h2>术语速查</h2>
+  <p class="section-lede">课件是英文的，这里把每个概念的英文、中文和一句话解释放在一起。点一行可以在图谱里找到它。</p>
+  <div class="gl-tools">
+    <input id="glq" type="search" placeholder="输入中文、英文或缩写筛选" autocomplete="off" spellcheck="false" aria-label="筛选术语">
+    <span class="gl-count" id="glCount" aria-live="polite"></span>
+  </div>
+  <ul class="gl-list" id="glList"></ul>
+  <h3 class="abbr-h">常见缩写</h3>
+  <div class="abbr" id="abbrList"></div>
+</section>
+
+<footer>
+  <p>内容依据 PoN3（Principles of Neuroscience 3，2025–26 学年春季）第 1.1–13.2 讲课件整理。文件夹中的 12.1 与 13.1 是同一份课件，4.2 有两个内容相同的副本。</p>
+  <p>这是为入门准备的简化摘要，省略了大量实验细节；复习考试时请以课件原文和老师的讲解为准。</p>
+</footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* DATA START */
+const THEME_ORDER = ['basic','plast','inhib','dev','mem','reward','sys','degen','method'];
+const THEMES = {
+  basic:{zh:'神经元与突触传递',short:'神经元与突触',en:'Neurons & synaptic transmission',lec:['1.1','1.2'],
+    idea:'神经元在细胞内用电信号（动作电位）传递信息，在突触处用化学信号（神经递质）把信息交给下一个细胞。',
+    pts:['静息电位靠 Na⁺/K⁺ 泵和 K⁺ 漏通道维持；动作电位来自电压门控 Na⁺、K⁺ 通道的先后开放。','神经递质分五大类；同一种递质可以作用于离子型（快）和代谢型（慢）两类受体。','突触强度 = n × p × a；初始释放概率 p 决定短时程是易化还是抑制。','许多 Gi 偶联受体在突触前抑制 Ca²⁺ 通道，从而减少递质释放。']},
+  plast:{zh:'突触可塑性',short:'突触可塑性',en:'Synaptic plasticity',lec:['2.1','2.2'],
+    idea:'突触会随活动变强（LTP）或变弱（LTD），这被认为是学习和记忆的细胞基础。',
+    pts:['NMDA 受体是巧合检测器：谷氨酸释放 + 突触后去极化 → Ca²⁺ 内流 → CaMKII → LTP。','表达机制以突触后插入 AMPA 受体为主，也有突触前提高释放概率的形式（苔藓纤维）。','Ca²⁺ 多 → LTP，Ca²⁺ 少 → LTD；STDP：突触前先放电 → LTP，突触后先放电 → LTD。','阻断、诱导、逆转的实验都支持 LTP 与记忆相关，但“人为诱导 LTP 产生记忆”尚未实现。']},
+  inhib:{zh:'抑制与神经环路',short:'抑制与环路',en:'Inhibition & circuits',lec:['3.1','3.2','5.1'],
+    idea:'GABA 能抑制不只是“刹车”，还决定放电的时机和网络的节律；抑制失调与癫痫、精神分裂症相关。',
+    pts:['GABA_A 是 Cl⁻ 通道（快），GABA_B 是 GPCR（慢）；GABA 的效果取决于 Cl⁻ 梯度（KCC2 / NKCC1）。','抑制的环路形式：前馈、反馈、紧张性、侧抑制，以及分流抑制。','PV 细胞（胞体、快速、γ 振荡）、SST 细胞（树突）、VIP 细胞（去抑制）各司其职。','精神分裂症：PV 与 GAD67 减少、γ 振荡受损；癫痫：GABA 受体或 KCC2 突变，发作后 KCC2 下降。']},
+  dev:{zh:'发育与神经发育障碍',short:'发育与关键期',en:'Development & neurodevelopmental disorders',lec:['4.1','4.2'],
+    idea:'大脑在关键期内依靠经验完成“布线”，抑制的成熟决定关键期何时开启；布线出错可能导致自闭症等发育障碍。',
+    pts:['关键期的例子：印刻、弱视、眼优势可塑性（被遮住的眼先发生 LTD）。','抑制与兴奋的比例要“刚刚好”：增强抑制使关键期提前，减弱抑制使其推迟。','自闭症与智力障碍高度遗传、高度共病，很多致病基因与突触有关。','脆性 X 综合征：FMRP 缺失 → 蛋白合成过多、mGluR-LTD 增强；动物中有效的药物在人体试验中失败。']},
+  mem:{zh:'学习、记忆与认知',short:'记忆与认知',en:'Learning, memory & cognition',lec:['8.1','8.2','9.1'],
+    idea:'记忆有不同类型，由不同脑区支持：海马负责形成新的陈述性记忆，之后记忆逐渐转移到新皮层；注意和情绪调节着这一切。',
+    pts:['陈述性（情景、语义）与非陈述性（技能、条件化）记忆可以分离，病人 H.M. 是经典证据。','海马三突触环路；位置细胞和网格细胞构成认知地图；齿状回负责模式分离。','记忆印迹倾向于招募兴奋性更高的神经元；睡眠中的重放和已有的图式都能促进巩固。','注意依赖前额叶和四大调质系统；杏仁核是情绪与恐惧记忆的中心。']},
+  reward:{zh:'奖赏、决策与社会行为',short:'奖赏与决策',en:'Reward, decision & social behaviour',lec:['6.1','6.2','7.2','13.2'],
+    idea:'多巴胺传递“奖赏预测误差”，大脑像强化学习算法一样学习价值，再据此做出（并不总是理性的）选择。',
+    pts:['RPE = 实际 − 预期；TD 学习、Q 值、softmax、时间折扣是描述行为的基本工具。','决策 = 证据积累到阈值；人类会系统性地偏离理性：损失厌恶、概率加权、框架效应。','习惯对应无模型强化学习；成瘾是奖赏通路被劫持，从习惯走向强迫。','社会认知：心理理论、共情（情感 / 认知）、攻击行为；镜像神经元的解释要谨慎。']},
+  sys:{zh:'感觉与运动系统',short:'感觉与运动',en:'Sensory & motor systems',lec:['11.1','11.2','12.1'],
+    idea:'视觉系统从视网膜开始就在提取特征（对比、方向）；运动系统按“策略—战术—执行”分层控制，基底神经节负责放行或抑制动作。',
+    pts:['视杆细胞负责夜视，视锥细胞负责色觉和精细视觉；光使光感受器超极化。','中心–周边感受野来自侧抑制；信息经 LGN 到达 V1（简单细胞、复杂细胞）。','脊髓反射：牵张反射（单突触）、屈肌回避反射与对侧伸肌反射（多突触）。','基底神经节：直接通路 Go、间接通路 No-Go；失衡导致帕金森病（运动少）或亨廷顿病（运动多）。']},
+  degen:{zh:'神经退行性疾病',short:'神经退行',en:'Neurodegeneration',lec:['10.1','10.2'],
+    idea:'大多数神经退行性疾病的共同点是错误折叠蛋白的聚集和传播；不同疾病损伤不同的易感神经元，所以症状不同。',
+    pts:['AD：Aβ 斑块 + tau 缠结；ApoE ε4 是最大的遗传风险因素；近年抗 Aβ 抗体获批。','PD：黑质多巴胺神经元丢失、路易小体（α-突触核蛋白）、线粒体功能障碍；治疗有 L-DOPA、DBS、细胞替代。','HD：CAG 重复扩增 → polyQ，纹状体最先受损；ALS：TDP-43 错误定位，运动神经元退化。','朊病毒病：错误构象可以“传染”；tau、α-syn、Aβ 也有类似的类朊传播。']},
+  method:{zh:'研究方法',short:'研究方法',en:'Methods',lec:['1.2','7.1'],
+    idea:'从单个突触到整个大脑，不同方法在分辨率、侵入性和能否推断因果上各有取舍。',
+    pts:['电生理：场电位记录群体反应；全细胞膜片钳记录单个细胞（电压钳测电流，电流钳测电位）。','光遗传学用光精确开关特定细胞，可以做因果实验。','人脑成像：EEG / MEG 时间分辨率高；fMRI 空间分辨率高，但 BOLD 只是神经活动的间接指标。','fMRI 分析必须做多重比较校正；MVPA 用活动模式来解码。']}
+};
+const LECTURES = [
+  ['1.1','Introduction & cell refresher','绪论与细胞基础'],
+  ['1.2','Presynaptic release','突触前释放'],
+  ['2.1','Expression mechanisms of LTP','LTP 的表达机制'],
+  ['2.2','Synaptic plasticity & learning','突触可塑性与学习'],
+  ['3.1','Inhibitory function','抑制的功能'],
+  ['3.2','Inhibitory cell diversity','抑制性细胞的多样性'],
+  ['4.1','Critical periods','关键期'],
+  ['4.2','Neurodevelopmental disorders','神经发育障碍'],
+  ['5.1','Inhibition, oscillations & disease','抑制、振荡与疾病'],
+  ['6.1','Reward & reinforcement learning','奖赏与强化学习'],
+  ['6.2','Schemas & decision making','图式与决策'],
+  ['7.1','Intro to neuroimaging','神经影像入门'],
+  ['7.2','Mood, habits & addiction','情绪、习惯与成瘾'],
+  ['8.1','Learning & memory 1','学习与记忆（一）'],
+  ['8.2','Learning & memory 2','学习与记忆（二）'],
+  ['9.1','Attention & emotion','注意与情绪'],
+  ['10.1','Common cellular processes in neurodegeneration','神经退行的共同细胞过程'],
+  ['10.2','Cell death in neurodegeneration','神经退行中的细胞死亡'],
+  ['11.1','The visual system, perception','视觉系统与知觉'],
+  ['11.2','Spinal & brain mechanisms of movement control','运动控制的脊髓与脑机制'],
+  ['12.1','Movement disorders & basal ganglia','运动障碍与基底神经节'],
+  ['13.2','Social neuroscience','社会神经科学']
+];
+
+const N = [
+/* ---- 神经元与突触 ---- */
+{id:'neuron',t:'basic',l:1,zh:'神经元',en:'Neuron',lec:['1.1'],
+ d:'神经系统处理信息的基本单位。树突接收输入，胞体整合信号，轴突始段（AIS）产生动作电位，再沿轴突传到末梢的突触。人脑约有 10¹¹ 个神经元、10¹⁴ 个突触。',
+ p:['髓鞘（中枢由少突胶质细胞、外周由施万细胞形成）包裹轴突，只有郎飞结处有离子通道','动作电位在郎飞结之间“跳跃式传导”，速度大大加快'],a:['neuron','axon','dendrite','soma','myelin','AIS','髓鞘','郎飞结','saltatory']},
+{id:'glia',t:'basic',l:2,zh:'胶质细胞',en:'Glia',lec:['1.1'],
+ d:'约占脑细胞的一半，为神经元提供结构和功能上的支持。',
+ p:['少突胶质细胞 / 施万细胞：形成髓鞘','星形胶质细胞：调节血流、回收递质、提供营养，彼此用 Ca²⁺ 信号通讯','小胶质细胞：脑内主要的免疫细胞，清除碎片，在发育中修剪突触'],a:['glia','astrocyte','microglia','oligodendrocyte','星形胶质','小胶质']},
+{id:'rmp',t:'basic',l:2,zh:'静息电位',en:'Resting membrane potential',lec:['1.1','3.1'],
+ d:'神经元安静时膜内约为 −70 mV。Na⁺/K⁺-ATP 酶建立离子浓度梯度，始终开放的 K⁺ 漏通道让膜电位接近 K⁺ 的平衡电位。',
+ p:['每种离子的平衡（反转）电位可以用 Nernst 方程计算','某种通道打开时，膜电位会被拉向该离子的反转电位——这是理解兴奋与抑制的关键'],a:['resting potential','Nernst','reversal potential','反转电位','leak channel']},
+{id:'ap',t:'basic',l:1,zh:'动作电位',en:'Action potential',lec:['1.1'],
+ d:'膜电位去极化到阈值后产生的“全或无”电脉冲，持续约 2 ms，是神经元长距离传递信息的方式。',
+ p:['上升相：电压门控 Na⁺ 通道开放，Na⁺ 内流','下降相：Na⁺ 通道失活，电压门控 K⁺ 通道开放，K⁺ 外流','在有髓轴突上于郎飞结之间跳跃式传导'],a:['action potential','spike','threshold','阈值','AP']},
+{id:'synapse',t:'basic',l:1,zh:'突触',en:'Synapse',lec:['1.1','3.1'],
+ d:'一个神经元把信号传给另一个细胞的结构。',
+ p:['电突触：缝隙连接直接通电，极快（<0.3 ms），常用来同步一群神经元','化学突触：释放神经递质，较慢，但更容易被调节（可塑性强）','兴奋性突触多为“非对称型”（突触后致密区厚），抑制性突触多为“对称型”'],a:['synapse','gap junction','缝隙连接','electrical synapse','chemical synapse']},
+{id:'nt',t:'basic',l:1,zh:'神经递质',en:'Neurotransmitters',lec:['1.1'],
+ d:'在突触处传递信号的化学分子，种类非常多；同一种递质往往能作用于多种受体。',
+ p:['氨基酸：谷氨酸（主要的兴奋性递质）、GABA（主要的抑制性递质）、甘氨酸','单胺：多巴胺、5-羟色胺、去甲肾上腺素，参与情绪、成瘾、应激等复杂行为','神经肽（约 100 种，如 VIP、SST、CCK）、嘌呤（ATP、腺苷）、气体（NO、CO、H₂S）'],a:['neurotransmitter','glutamate','谷氨酸','neuropeptide','神经肽','monoamine','单胺','purine','nitric oxide']},
+{id:'receptors',t:'basic',l:2,zh:'离子型与代谢型受体',en:'Ionotropic vs metabotropic receptors',lec:['1.1'],
+ d:'递质受体分两大类：离子型受体本身就是配体门控离子通道，毫秒级快速起效；代谢型受体是 G 蛋白偶联受体（GPCR），通过 G 蛋白和第二信使起效，慢而持久。',a:['GPCR','G protein','ligand-gated','ionotropic','metabotropic','G 蛋白偶联']},
+{id:'ampar',t:'basic',l:2,zh:'AMPA 受体',en:'AMPA receptor',lec:['1.1','2.1'],
+ d:'介导快速兴奋性传递的离子型谷氨酸受体。在静息电位下，谷氨酸一结合就能开放，产生 EPSP 中快速的早期成分。突触上 AMPA 受体的数量直接决定这个突触的强弱。',a:['AMPAR','AMPA','GluA1','GluA2']},
+{id:'nmdar',t:'basic',l:1,zh:'NMDA 受体',en:'NMDA receptor',lec:['1.1','2.1','4.1','5.1'],
+ d:'离子型谷氨酸受体，静息时被 Mg²⁺ 堵住。只有“谷氨酸结合”和“突触后去极化”同时发生时才开放并让 Ca²⁺ 进入，所以它是一个巧合检测器（coincidence detector），也是 LTP 的开关。',
+ p:['由 GluN1 + GluN2（A–D）亚基组成','拮抗剂：APV（实验工具）、ketamine 与 PCP（诱发类似精神分裂症的症状）、美金刚（治疗 AD）'],a:['NMDAR','NMDA','APV','Mg2+','coincidence detector','巧合检测','GluN1','ketamine','memantine','美金刚']},
+{id:'epsp',t:'basic',l:2,zh:'突触后电位与总和',en:'EPSP / IPSP & summation',lec:['1.1','1.2'],
+ d:'兴奋性突触后电位（EPSP）让膜电位靠近放电阈值，抑制性突触后电位（IPSP）让它远离阈值。神经元把成百上千个 EPSP 和 IPSP 在时间和空间上加总，超过阈值才放电。',a:['EPSP','IPSP','EPSC','IPSC','summation','总和']},
+{id:'release',t:'basic',l:1,zh:'递质释放',en:'Transmitter release & release probability',lec:['1.2'],
+ d:'动作电位到达末梢 → 电压门控 Ca²⁺ 通道开放 → Ca²⁺ 触发囊泡与膜融合、释放递质。但动作电位并不总能引起释放，会出现“释放失败”。',
+ p:['突触强度 = n × p × a：释放位点数 × 释放概率 × 量子幅度','提高末梢的 [Ca²⁺]，或增加已停靠囊泡的比例，都会提高释放概率 p'],a:['release probability','释放概率','n×p×a','npa','quantal','Pr','vesicle','囊泡','failures']},
+{id:'stp',t:'basic',l:2,zh:'短时程可塑性',en:'Short-term plasticity (PPF / PPD / PTP)',lec:['1.2','3.2'],
+ d:'毫秒到分钟尺度的突触强度变化，主要来自释放概率的改变。',
+ p:['初始 p 高 → 已停靠的囊泡被耗尽 → 成对脉冲抑制（PPD）','初始 p 低 → 残余 Ca²⁺ 累积 → 成对脉冲易化（PPF）','高频刺激后释放持续增加 → 强直后增强（PTP）'],a:['PPF','PPD','PTP','paired-pulse','成对脉冲','short-term plasticity']},
+{id:'presyn_mod',t:'basic',l:2,zh:'突触前调制',en:'Presynaptic modulation',lec:['1.2'],
+ d:'突触前末梢上有许多 Gi 偶联的 GPCR，被激活后抑制电压门控 Ca²⁺ 通道，可以几乎完全抑制递质释放。少数受体（如 mGlu1）则通过内质网释放 Ca²⁺ 来增强释放。',
+ p:['例子：GABA_B、CB1 大麻素受体、μ-阿片受体、A1 腺苷受体、α2 肾上腺素受体、M2 乙酰胆碱受体、III 组 mGluR'],a:['presynaptic modulation','CB1','opioid','adenosine','Gi','大麻素']},
+/* ---- 研究方法 ---- */
+{id:'ephys',t:'method',l:2,zh:'电生理记录',en:'Electrophysiology: field & patch clamp',lec:['1.2','2.1'],
+ d:'用电极直接记录神经元的电活动，是研究突触最直接的方法。',
+ p:['场电位记录：记录一群突触的平均反应，简单稳定，但无法识别单个细胞','膜片钳：贴附式记录电极下的通道；全细胞式可以记录并控制整个细胞','电压钳固定电压测电流（EPSC，最适合研究释放）；电流钳测电位（EPSP，反映细胞的真实反应）','配对记录：同时记录突触前、后两个细胞，知道输入来源和精确时序'],a:['patch clamp','膜片钳','voltage clamp','current clamp','电压钳','电流钳','field recording','场电位','whole-cell','paired recording']},
+{id:'optogenetics',t:'method',l:2,zh:'光遗传学',en:'Optogenetics',lec:['1.2','2.2','3.2'],
+ d:'用基因手段让特定神经元表达光敏蛋白，再用光精确地开关它们，从而做因果实验。',
+ p:['ChR2（通道视紫红质）：蓝光打开阳离子通道 → 兴奋、放电','Halorhodopsin：黄光把 Cl⁻ 泵入细胞 → 抑制','例子：重新激活记忆印迹细胞制造错误记忆；发现 M1 → S1 的 VIP 去抑制环路'],a:['ChR2','channelrhodopsin','halorhodopsin','光遗传','chemogenetics','化学遗传']},
+{id:'cv_uncaging',t:'method',l:3,zh:'CV 分析与解笼锁',en:'CV analysis & glutamate uncaging',lec:['1.2','2.1'],
+ d:'判断突触强度的变化发生在哪一侧：纯突触后的变化不改变 1/CV²，突触前的变化会改变它；成对脉冲比改变也提示突触前机制。双光子谷氨酸解笼锁可以在单个突触上直接给谷氨酸，只检测突触后的敏感性。',a:['CV','1/CV2','coefficient of variation','变异系数','uncaging','解笼锁','PPR','two-photon']},
+{id:'behav_tasks',t:'method',l:2,zh:'动物模型与行为范式',en:'Animal models & behavioural tasks',lec:['2.2','4.2','7.2','8.1','10.1'],
+ d:'把“记忆”“冲动”这类心理概念变成可以测量的行为。',
+ p:['Morris 水迷宫：空间记忆（大鼠记住水下隐藏平台的位置）','恐惧条件化、抑制性回避：用冻结或回避行为衡量恐惧记忆','Y 迷宫：工作记忆；5-CSRTT：注意与冲动性','转基因模型：Fmr1 敲除（脆性 X）、5xFAD（AD）、α-syn A53T（PD）'],a:['water maze','水迷宫','Morris','5-CSRTT','5xFAD','A53T','mouse model','小鼠模型','Y maze','inhibitory avoidance']},
+{id:'mri_dti',t:'method',l:2,zh:'结构 MRI 与 DTI',en:'Structural MRI & diffusion tensor imaging',lec:['7.1'],
+ d:'结构 MRI 利用组织中氢原子的磁共振信号呈现脑结构；弥散张量成像（DTI）测量水分子沿纤维方向扩散的程度（各向异性分数 FA：0 表示各向同性，1 表示沿一条直线），由此追踪白质纤维束、重建大脑的“连接组”。',a:['MRI','DTI','tractography','FA','fractional anisotropy','connectome','连接组','白质']},
+{id:'eeg_meg',t:'method',l:2,zh:'脑电图与脑磁图',en:'EEG & MEG',lec:['7.1'],
+ d:'在头皮外记录大量皮层神经元同步突触电流所产生的电场（EEG）或磁场（MEG）。时间分辨率达毫秒级，但空间分辨率较差，难以探测深部结构。',
+ p:['可以看到 δ、θ、α、β、γ 等脑电波','无创，可用于睡眠研究和癫痫发作监测'],a:['EEG','MEG','脑电','脑磁','brain waves']},
+{id:'fmri',t:'method',l:1,zh:'fMRI 与 BOLD',en:'Functional MRI & the BOLD signal',lec:['7.1','13.2'],
+ d:'测量血氧水平依赖（BOLD）信号来间接反映脑活动——它与神经活动相关，但并不等于神经活动。一次扫描的数据由约 5–10 万个体素（voxel）组成。',
+ p:['分析：把刺激时间与血流动力学响应卷积成回归量，用一般线性模型（GLM）求每个体素的 β 值，再做组间统计','必须做多重比较校正（Bonferroni / FWE、FDR）；有假设时可以只看感兴趣区（ROI）','MVPA：分析多个体素的活动“模式”，可以解码被试看到或想到的内容','分辨率：空间上 EEG < MEG < fMRI；时间上 fMRI < EEG ≈ MEG'],a:['fMRI','BOLD','GLM','MVPA','voxel','体素','decoding','解码','MNI','Talairach','功能磁共振']},
+{id:'modeling',t:'method',l:2,zh:'计算模型分析',en:'Computational model-based analysis',lec:['6.1','7.2'],
+ d:'先用数学模型（如强化学习模型）拟合每个人的行为，得到学习率、探索程度、折扣率等个体参数；再把模型的内部变量（Q 值、预测误差）与神经活动或 fMRI 信号对应起来，从而“看到”大脑在算什么。',a:['model-based analysis','computational model','计算模型','计算神经科学']},
+/* ---- 突触可塑性 ---- */
+{id:'hebb',t:'plast',l:2,zh:'赫布法则',en:'Hebb’s postulate',lec:['2.1','2.2'],
+ d:'Hebb（1949）：如果细胞 A 反复参与激发细胞 B，A 对 B 的效能就会增强。俗称“一起放电的神经元连在一起”，更准确的说法是“A 促使 B 放电，A→B 就变强”，强调因果和先后顺序。',a:['Hebb','Hebbian','fire together wire together']},
+{id:'ltp',t:'plast',l:1,zh:'长时程增强 LTP',en:'Long-term potentiation (LTP)',lec:['2.1','2.2'],
+ d:'突触经过高频刺激（如 100 Hz、1 秒的强直刺激）后，传递效能持续增强数小时甚至更久。1973 年 Bliss 与 Lømo 在海马齿状回首次发现，被视为学习和记忆的细胞基础。',
+ p:['诱导：谷氨酸释放 + 突触后去极化 → NMDA 受体开放 → Ca²⁺ 内流','突触特异性：只有被激活的突触才会增强','超过约 1 小时的 LTP 还需要合成新蛋白，更晚期需要基因表达'],a:['LTP','long-term potentiation','tetanus','强直刺激','Bliss','Lømo']},
+{id:'camkii',t:'plast',l:2,zh:'CaMKII 信号',en:'Ca²⁺ – calmodulin – CaMKII',lec:['2.1','2.2'],
+ d:'进入树突棘的 Ca²⁺ 先与钙调蛋白结合，再激活 CaMKII（由 12 个亚基组成）。CaMKII 在 T286 位点自磷酸化后可以持续保持活性，因此被称为一种“分子记忆”。',
+ p:['Ca²⁺ 多 → CaMKII 占优 → LTP','Ca²⁺ 少 → 钙调神经磷酸酶（PP2B）等磷酸酶占优 → LTD','新证据：CaMKII 与 NMDA 受体的结合，可能比它的激酶活性更重要'],a:['CaMKII','calmodulin','钙调蛋白','calcineurin','PP2B','T286']},
+{id:'ampar_traffic',t:'plast',l:2,zh:'AMPA 受体插入',en:'AMPA receptor trafficking',lec:['2.1','4.1'],
+ d:'海马 CA1 经典 LTP 的主要表达机制在突触后：更多 AMPA 受体通过胞吐和侧向扩散进入突触；CaMKII 磷酸化 GluA1 的 Ser831 还可能提高通道电导。LTD 则相反，AMPA 受体被内吞、移出突触。',a:['AMPAR insertion','receptor trafficking','postsynaptic expression','突触后表达','Ser831','endocytosis']},
+{id:'silent',t:'plast',l:3,zh:'沉默突触',en:'Silent synapses',lec:['2.1'],
+ d:'只有 NMDA 受体、没有 AMPA 受体的突触。静息电位下 NMDA 受体被 Mg²⁺ 堵住，所以这种突触看起来“沉默”。LTP 插入 AMPA 受体后它们被“唤醒”（unsilencing），这也解释了为什么 LTP 后“释放失败”会减少。',a:['silent synapse','unsilencing']},
+{id:'pre_ltp',t:'plast',l:3,zh:'突触前 LTP',en:'Presynaptic (mossy fibre) LTP',lec:['2.1'],
+ d:'齿状回颗粒细胞到 CA3 的苔藓纤维突触，释放概率极低、释放位点很多。这里的 LTP 不依赖 NMDA 受体，而是通过突触前 R 型 Ca²⁺ 通道和 PKA 提高释放概率。它说明不同突触的 LTP 机制并不相同——“突触前还是突触后”是神经科学的著名争论之一。',a:['mossy fibre','苔藓纤维','PKA','presynaptic LTP']},
+{id:'ltd',t:'plast',l:1,zh:'长时程抑制 LTD',en:'Long-term depression (LTD)',lec:['2.2','4.1'],
+ d:'突触传递的持续减弱。经典形式：低频刺激（1 Hz）→ 少量 Ca²⁺ 经 NMDA 受体进入 → 激活磷酸酶 → AMPA 受体被移除。',
+ p:['其他形式：mGluR 依赖的 LTD、突触前 CB1 大麻素受体介导的 LTD','在关键期的眼优势可塑性、脆性 X 综合征和成瘾中都扮演关键角色'],a:['LTD','long-term depression','mGluR-LTD']},
+{id:'stdp',t:'plast',l:2,zh:'时序依赖可塑性',en:'Spike-timing-dependent plasticity (STDP)',lec:['2.2'],
+ d:'可塑性的方向取决于突触前后放电的先后：突触前先放电、突触后在几十毫秒内跟着放电 → LTP；顺序颠倒 → LTD。比 100 Hz 强直刺激更可能是体内真实发生的诱导方式。',a:['STDP','spike timing']},
+{id:'btsp',t:'plast',l:3,zh:'行为时间尺度可塑性',en:'Behavioural timescale synaptic plasticity (BTSP)',lec:['2.2'],
+ d:'在体内，树突会产生持续较长的平台电位（plateau potential），它前后几秒内的输入都能被增强，可塑性窗口远比 STDP 宽，让一次经历就能快速形成海马的位置野。',a:['BTSP','plateau potential','平台电位']},
+{id:'ltp_memory',t:'plast',l:1,zh:'LTP 等于记忆吗？',en:'Does LTP = memory?',lec:['2.2'],
+ d:'要证明 LTP 是记忆的基础，需要四类证据：目前前三类有支持，最后一类还没实现。结论：LTP 很可能参与记忆的形成，但兴奋性的改变、新突触的形成等也有贡献。',
+ p:['① 阻断 LTP 阻止学习：NMDA 受体拮抗剂 APV 使大鼠学不会 Morris 水迷宫（Morris 1986）','② 学习诱导 LTP：抑制性回避训练后，CA1 部分位点的突触增强（Whitlock 2006）','③ 逆转 LTP 抹去记忆：PKMζ 抑制剂 ZIP 同时逆转 LTP 和回避记忆（Pastalkova 2006，药物特异性有争议）','④ 诱导 LTP 产生记忆：尚未直接实现；光遗传学激活印迹细胞可以制造错误记忆（Ramirez 2013）'],a:['PKMζ','PKMzeta','ZIP','Whitlock','Pastalkova','Morris water maze']},
+{id:'spines',t:'plast',l:2,zh:'树突棘与结构可塑性',en:'Dendritic spines & structural plasticity',lec:['2.2','8.1'],
+ d:'绝大多数兴奋性突触位于树突棘上。棘越大，突触通常越强、越稳定；LTP 使棘体积增大（需要肌动蛋白聚合），还可能长出新棘。树突棘不断生成和消失，学习会改变这种动态平衡。',
+ p:['新棘需要新的突触前末梢与之配对，但轴突又细、来源又杂，很难成像','更大尺度：训练使某些手指在感觉皮层的代表区扩大（皮层重映射）'],a:['dendritic spine','树突棘','actin','肌动蛋白','remapping','重映射','structural plasticity']},
+/* ---- 抑制与环路 ---- */
+{id:'gaba',t:'inhib',l:1,zh:'GABA 能神经元',en:'GABA & GABAergic neurons',lec:['1.1','3.1'],
+ d:'GABA 是脑内最主要的抑制性递质，由谷氨酸经谷氨酸脱羧酶（GAD）合成，再由囊泡 GABA 转运体（VGAT）装入囊泡。GAD 和 VGAT 也是识别 GABA 能神经元的标志。',
+ p:['GABA 能细胞多为局部的中间神经元，但小脑浦肯野细胞、纹状体的中型多棘神经元（MSN）是 GABA 能的“主细胞”（输出细胞）','抑制性突触可以位于树突干、胞体甚至轴突上，而兴奋性突触几乎都在树突棘上','甘氨酸是脑干和脊髓中另一种重要的抑制性递质'],a:['GABA','GAD','GAD65','GAD67','VGAT','glycine','甘氨酸','principal cell','主细胞']},
+{id:'gabar',t:'inhib',l:2,zh:'GABA 受体',en:'GABA_A & GABA_B receptors',lec:['1.1','3.1','5.1'],
+ d:'GABA_A 是配体门控的 Cl⁻ 通道（与烟碱型乙酰胆碱受体、甘氨酸受体同属 Cys-loop 家族），产生快速 IPSP，苯二氮䓬类药物可以增强它；GABA_B 是 Gi 偶联的 GPCR，打开内向整流 K⁺ 通道，IPSP 更慢、更负，也位于突触前抑制释放。',a:['GABAA','GABAB','GABA-A','GABA-B','benzodiazepine','苯二氮䓬','IPSP','Cys-loop']},
+{id:'chloride',t:'inhib',l:2,zh:'KCC2 与 Cl⁻ 梯度',en:'Chloride gradient: KCC2 & NKCC1',lec:['3.1','4.1','4.2','5.1'],
+ d:'GABA_A 是抑制还是兴奋，取决于 Cl⁻ 的反转电位。成熟神经元中 KCC2 把 Cl⁻ 泵出，胞内 Cl⁻ 低，GABA 使细胞超极化；幼年神经元中 NKCC1 占优，胞内 Cl⁻ 高，GABA 反而使细胞去极化。',
+ p:['癫痫发作会降低 KCC2 表达 → GABA 的抑制力下降 → 更容易再次发作','KCC2 突变是某些遗传性癫痫的原因','出生前后 GABA 的转换异常与自闭症模型相关（Tyzio 2014）'],a:['KCC2','NKCC1','chloride','depolarizing GABA','去极化 GABA','Cl-']},
+{id:'shunting',t:'inhib',l:3,zh:'分流抑制',en:'Shunting inhibition',lec:['3.1','3.2'],
+ d:'即使 GABA 的反转电位位于静息电位和阈值之间、不引起超极化，打开的 GABA_A 通道也会降低局部膜电阻，像“短路”一样分走附近兴奋性输入的电流，从而抑制放电。',a:['shunting','分流']},
+{id:'inhib_forms',t:'inhib',l:1,zh:'抑制的环路形式',en:'Feedforward, feedback, tonic & lateral inhibition',lec:['3.1','3.2','11.1'],
+ d:'抑制在神经环路中有几种基本的组织方式。',
+ p:['前馈抑制：中间神经元与主细胞接受同一个输入，稍晚一点抑制主细胞，只留下很短的放电时间窗','反馈抑制：中间神经元被主细胞激活，再回过头来抑制同一群细胞','紧张性抑制：突触外高亲和力 GABA_A 受体持续产生的“背景”抑制','侧抑制：与前馈类似，被激活的通路抑制它的邻居，从而增强对比'],a:['feedforward','feedback','tonic inhibition','lateral inhibition','前馈抑制','反馈抑制','侧抑制','紧张性抑制']},
+{id:'interneuron',t:'inhib',l:1,zh:'中间神经元多样性',en:'Interneuron diversity',lec:['3.1','3.2'],
+ d:'同一脑区的兴奋性主细胞相对单一，抑制性中间神经元却高度多样，可以按放电模式（如快速放电）、形态（轴突靶向胞体还是树突）和分子标记（PV、SST、VIP、CCK）来分类。每一类细胞的输入、突触和内在特性，都恰好适合它承担的功能。',
+ p:['抑制的四种功能：限制放电时机、防止兴奋失控、削弱特定输入、去抑制','发育来源：皮层主细胞由放射状胶质“由内向外”生成，中间神经元则大多起源于神经节隆起，再长途迁移到皮层','CCK 篮状细胞：使用 N 型 Ca²⁺ 通道、异步释放 GABA，提供弥散的抑制'],a:['interneuron','中间神经元','ganglionic eminence','神经节隆起','CCK','basket cell','篮状细胞']},
+{id:'pv',t:'inhib',l:2,zh:'PV 篮状细胞',en:'Parvalbumin (PV) basket cells',lec:['3.2','5.1'],
+ d:'含小白蛋白的快速放电中间神经元，突触集中在主细胞的胞体上。它的各种性质都是为“快”而生：接受更大更快的兴奋性输入，Kv3.1 通道让复极化更快，P/Q 型 Ca²⁺ 通道保证同步释放，含 α1 亚基的 GABA_A 受体产生快速的 IPSC。',
+ p:['前馈抑制的主力，精确限制主细胞的放电时机','在每个 γ 振荡周期都放电，是 γ 节律的“节拍器”','精神分裂症患者 PV 细胞的标记明显减少'],a:['PV','parvalbumin','小白蛋白','fast-spiking','快速放电','Kv3.1']},
+{id:'sst',t:'inhib',l:2,zh:'SST 细胞',en:'Somatostatin (SST) interneurons',lec:['3.2'],
+ d:'含生长抑素的中间神经元，突触靶向主细胞的远端树突，可以单独抑制某一条树突分支上的输入。它接受的兴奋性输入是易化型的（初始释放概率低），活动越强被募集得越多，有助于防止兴奋失控。',a:['SST','somatostatin','生长抑素','Martinotti','dendrite-targeting']},
+{id:'vip',t:'inhib',l:2,zh:'VIP 细胞与去抑制',en:'VIP interneurons & disinhibition',lec:['3.2'],
+ d:'含血管活性肠肽的中间神经元专门抑制其他中间神经元（主要是 SST 细胞），从而“解除抑制”，在抑制的“毯子”上开一个洞。它们由长程输入驱动，例如运动皮层 M1 投射到体感皮层 S1。去抑制被认为参与联想学习和恐惧学习。',a:['VIP','disinhibition','去抑制']},
+{id:'oscillation',t:'inhib',l:1,zh:'神经振荡与 γ 节律',en:'Network oscillations & gamma rhythm',lec:['5.1','7.1','9.1'],
+ d:'大群神经元同步活动形成节律，不同频段（δ、θ、α、β、γ）对应不同的脑状态。γ 振荡（30–90 Hz）与认知密切相关。即使很小的 IPSP 也能让许多神经元同步放电——抑制不仅是刹车，也是节拍器。',
+ p:['PING 模型：主细胞兴奋中间神经元，中间神经元再周期性地抑制主细胞','ING 模型：中间神经元之间互相抑制，产生节律'],a:['oscillation','振荡','gamma','γ','PING','ING','brain waves','脑电波','rhythm']},
+{id:'ei_balance',t:'inhib',l:1,zh:'兴奋/抑制平衡',en:'Excitation / inhibition (E/I) balance',lec:['4.1','4.2','5.1'],
+ d:'健康的神经网络需要兴奋与抑制“刚刚好”。E/I 失衡是贯穿本课程多种疾病的共同线索：兴奋过强导致癫痫；PV 抑制减弱与精神分裂症相关；E/I 失衡是自闭症的主要假说之一；抑制成熟的程度还决定关键期何时开启。',a:['E/I balance','E/I','excitation inhibition','兴奋抑制平衡']},
+{id:'schizo',t:'inhib',l:1,zh:'精神分裂症',en:'Schizophrenia',lec:['5.1'],
+ d:'常见的严重精神疾病，终生患病率约 1%；男性多在 15–30 岁起病，女性稍晚。',
+ p:['症状：阳性（幻觉、妄想）、阴性（少言、快感缺乏、情感平淡）、认知（执行功能、注意力、工作记忆受损）','谷氨酸线索：NMDA 受体拮抗剂 PCP、ketamine 可以诱发类似症状','GABA 线索：患者死后脑中 GAD67 明显减少、PV 细胞标记减少，认知任务中 γ 振荡减弱','增强 GABA 的药物试验至今没有成功，可能需要针对特定的中间神经元亚类'],a:['schizophrenia','精分','PCP','ketamine','GAD67']},
+{id:'epilepsy',t:'inhib',l:1,zh:'癫痫',en:'Epilepsy',lec:['5.1','7.1'],
+ d:'脑内异常、过度或同步的神经活动（发作）。可由脑损伤或遗传引起，但很多原因不明；英国约有 60 万患者。本质是兴奋过多、抑制不足：谷氨酸受体激动剂（如红藻氨酸）或 GABA 拮抗剂都能诱发发作。',
+ p:['遗传：GABA_A 受体、KCC2 等基因突变可以致病','“一次发作让下一次更容易”：发作降低 KCC2，GABA 变成去极化的','药物：Na⁺ / Ca²⁺ 通道阻断剂、GABA 转氨酶抑制剂、GABA 再摄取抑制剂、GABA_A 增强剂（如苯二氮䓬）'],a:['epilepsy','seizure','发作','kainate','红藻氨酸']},
+/* ---- 发育 ---- */
+{id:'critical',t:'dev',l:1,zh:'关键期',en:'Critical period',lec:['4.1','4.2'],
+ d:'发育中的特定时间窗：这期间正常的感觉经验是大脑正常发育所必需的，错过之后很难弥补。每种感觉模态都有多个关键期。',
+ p:['印刻：小鹅孵出后不久会跟随第一个看到的移动物体（Lorenz），错过时间窗就不会形成','弱视：大约 6 个月到 5 岁之间，白内障或斜视让一只眼的输入异常，大脑对这只眼的视力会永久下降','关键期可塑性需要突触过程（LTD / LTP）参与；时间窗由抑制的“甜蜜点”决定'],a:['critical period','amblyopia','弱视','imprinting','印刻','Lorenz']},
+{id:'odp',t:'dev',l:2,zh:'眼优势可塑性',en:'Ocular dominance plasticity (ODP)',lec:['4.1'],
+ d:'关键期内遮住一只眼（单眼剥夺），视皮层神经元的反应会偏向睁开的那只眼。第一步是被遮眼输入的 LTD，之后才是睁眼输入的增强；阻止 AMPA 受体内吞（LTD 所需）就能阻止被遮眼反应的下降。',a:['ODP','ocular dominance','monocular deprivation','单眼剥夺','VEP']},
+{id:'cp_gaba',t:'dev',l:2,zh:'抑制决定关键期',en:'Inhibition sets critical-period timing',lec:['4.1'],
+ d:'关键期在抑制与兴奋的比例达到“甜蜜点”时开启，抑制要刚刚好。',
+ p:['促进抑制发育 → 关键期提前：苯二氮䓬（增强 GABA_A）、BDNF 过表达','延缓抑制发育 → 关键期推迟：黑暗饲养、GAD65 敲除（给予苯二氮䓬后恢复）','随年龄变化的因素：Cl⁻ 反转电位、抑制性突触的数量、抑制细胞的募集'],a:['BDNF','dark rearing','黑暗饲养','GAD65','benzodiazepine','sweet spot']},
+{id:'nmda_switch',t:'dev',l:3,zh:'NMDAR 亚基转换',en:'GluN2B → GluN2A switch & metaplasticity',lec:['4.1'],
+ d:'发育中，皮层突触的 NMDA 受体从含 GluN2B 逐渐转为含 GluN2A（可以用 ifenprodil 区分）。黑暗饲养会减少 GluN2A，使可塑性偏向 LTP。这种“可塑性的可塑性”叫作元可塑性（metaplasticity）。',a:['GluN2A','GluN2B','ifenprodil','metaplasticity','元可塑性']},
+{id:'ndd',t:'dev',l:1,zh:'神经发育障碍',en:'Neurodevelopmental disorders',lec:['4.2','12.1'],
+ d:'由神经系统发育缺陷导致的疾病，包括自闭症谱系障碍、智力障碍、唐氏综合征（21 三体）、部分癫痫、抽动秽语综合征，或许还有精神分裂症。大脑的连接太多，不可能全部由基因编码，需要依靠活动和经验来自组织，而这需要复杂的突触机制。',a:['NDD','neurodevelopmental disorder','Down syndrome','唐氏综合征','intellectual disability','智力障碍','ID']},
+{id:'asd',t:'dev',l:1,zh:'自闭症谱系障碍',en:'Autism spectrum disorder (ASD)',lec:['4.2'],
+ d:'持续的社交沟通与互动困难，加上局限、重复的行为或兴趣，常伴有感觉过敏。患病率约 1%，目前没有获批的治疗药物。',
+ p:['高度遗传：双生子研究提示遗传度可高达 90%','与智力障碍（约 2%）高度共病','致病基因集中在突触、转录调控和染色质相关的基因，且多在胎儿期富集表达','E/I 失衡是主要理论之一；基于抑制的药物在动物中有效，但人体试验尚未成功'],a:['ASD','autism','自闭症','孤独症']},
+{id:'fxs',t:'dev',l:2,zh:'脆性 X 综合征',en:'Fragile X syndrome (FXS)',lec:['4.2'],
+ d:'FMR1 基因沉默导致的单基因疾病，是研究智力障碍和自闭症的模型。缺失的 FMRP 蛋白本身不参与突触传递，但在突触处高表达、抑制蛋白翻译。约 1/3 的患者符合自闭症诊断。',
+ p:['小鼠：桶状皮层（每根胡须对应一个“桶”）的丘脑–皮层可塑性关键期推迟','mGluR5 依赖的 LTD 增强，总蛋白合成增加','在小鼠中降低 mGluR5 可以纠正形态、行为和听源性发作，但 mGluR5 负性变构调节剂的人体试验令人失望'],a:['FXS','FMR1','FMRP','mGluR5','barrel cortex','桶状皮层','fragile X']},
+/* ---- 记忆与认知 ---- */
+{id:'memory_types',t:'mem',l:1,zh:'记忆的分类',en:'Types of memory',lec:['8.1'],
+ d:'记忆的一般路径：学习、编码 → 储存、巩固 → 提取，途中随时可能遗忘。',
+ p:['按性质：陈述性记忆（可以有意识地提取：情景、事实与词义）与非陈述性记忆（运动技能、条件反射、启动效应、解谜技巧）','按时间：瞬时记忆（不到一秒）→ 短时记忆（秒到分钟，包括工作记忆）→ 长时记忆（天到年）'],a:['declarative','non-declarative','procedural','陈述性','非陈述性','程序性','episodic','情景记忆','semantic','语义记忆','short-term','long-term']},
+{id:'hm',t:'mem',l:2,zh:'病人 H.M.',en:'Patient H.M.',lec:['8.1'],
+ d:'Henry Molaison 为治疗癫痫切除了双侧内侧颞叶（含海马）。术后他无法形成新的陈述性记忆（顺行性遗忘），却仍能学会新的运动技能、并随练习进步。这证明内侧颞叶对陈述性记忆至关重要，而不同的记忆系统可以分离。',
+ p:['音乐家 Clive Wearing：病毒性脑炎损毁海马，记忆只能维持 7–30 秒，但音乐记忆完好'],a:['H.M.','HM','Henry Molaison','Clive Wearing','amnesia','遗忘症','medial temporal lobe','内侧颞叶']},
+{id:'hippocampus',t:'mem',l:1,zh:'海马与内嗅皮层',en:'Hippocampus & entorhinal cortex',lec:['2.1','8.1','8.2'],
+ d:'内侧颞叶中的核心记忆结构，负责情景记忆和空间导航，也是 LTP 研究得最多的地方。',
+ p:['三突触环路：内嗅皮层 →（穿通纤维）→ 齿状回 →（苔藓纤维）→ CA3 →（Schaffer 侧支）→ CA1','外侧内嗅皮层（LEC）提供多感觉的情景信息；内侧内嗅皮层（MEC）含有网格细胞','海马沿长轴（背侧 / 腹侧）的结构和功能并不均一'],a:['hippocampus','海马','CA1','CA3','dentate gyrus','齿状回','entorhinal','内嗅皮层','trisynaptic','三突触','perforant path','Schaffer']},
+{id:'place_cells',t:'mem',l:2,zh:'位置细胞与网格细胞',en:'Place cells & grid cells',lec:['8.1','8.2'],
+ d:'海马的位置细胞在动物经过特定位置（位置野）时放电；内侧内嗅皮层的网格细胞在整个环境中按六边形网格规律放电。它们共同构成大脑的“认知地图”，支持记忆引导的导航。',a:['place cell','grid cell','位置细胞','网格细胞','cognitive map','认知地图','place field','位置野']},
+{id:'pattern_sep',t:'mem',l:3,zh:'模式分离',en:'Pattern separation',lec:['8.2'],
+ d:'齿状回把相似的输入转换成差异更大的神经表征，避免相似的经历（比如两次停车停在不同车位）互相混淆。齿状回也是成年神经发生（生成新神经元）的部位。',a:['pattern separation','neurogenesis','神经发生','dentate gyrus']},
+{id:'engram',t:'mem',l:1,zh:'记忆印迹',en:'Memory engram',lec:['2.2','8.1','8.2'],
+ d:'储存某段特定记忆的一群神经元及其连接。学习时兴奋性相对更高的神经元会在“竞争”中胜出、被招募进印迹（例如过表达转录因子 CREB 的细胞）。',
+ p:['Ramirez 2013：在新环境中用光重新激活旧环境的印迹细胞，同时给予电击，小鼠会害怕从未被电击过的旧环境——一段错误记忆','“沉默印迹”：阻断训练引起的突触增强后，记忆无法自然提取，但仍能被人工激活','学习可以让神经元的兴奋性升高数小时到数天'],a:['engram','印迹','CREB','excitability','兴奋性','Tonegawa','Josselyn']},
+{id:'consolidation',t:'mem',l:1,zh:'记忆巩固',en:'Systems consolidation',lec:['6.2','8.1','8.2'],
+ d:'新记忆起初依赖海马，之后逐渐转移到新皮层（如内侧前额叶 mPFC）长期保存：用化学遗传学抑制 mPFC 的印迹细胞，只影响久远记忆的提取，不影响近期记忆。',
+ p:['标准巩固模型：久远记忆最终不再依赖海马','多重痕迹理论：情景记忆的细节始终需要海马（语义和要点记忆不需要）'],a:['consolidation','巩固','remote memory','recent memory','multiple trace theory','多重痕迹','standard model']},
+{id:'sleep',t:'mem',l:2,zh:'睡眠与记忆',en:'Sleep & memory',lec:['8.2'],
+ d:'睡眠中海马会“重放”清醒时的放电序列，并与前额叶协同活动，帮助记忆巩固。慢波睡眠（SWS）和快速眼动睡眠（REM）中，海马同步放电的程度差别很大。',a:['sleep','睡眠','replay','重放','SWS','REM']},
+{id:'working_mem',t:'mem',l:2,zh:'工作记忆',en:'Working memory',lec:['7.1','8.1'],
+ d:'为计划和执行行为而短暂保存、操作信息的记忆，比如心算时记住中间结果。依赖前额叶。',
+ p:['槽位模型：容量固定（Miller 的 7 个、Cowan 的 4 个），全或无','资源模型：总资源有限，项目越多每个记得越不精确；注意可以给某一项分配更多资源','fMRI 显示与容量相关的活动约在 4 项时饱和；BOLD 信号的强度和其中的信息量可以分离'],a:['working memory','工作记忆','slot model','resource model','Miller','Cowan','Y maze']},
+{id:'schema',t:'mem',l:2,zh:'图式',en:'Schemas',lec:['6.2'],
+ d:'有组织的知识或行为模式，帮助整合多种信息、加速后续的学习和决策。在统计学里它像贝叶斯先验，在计算神经科学里对应“基于模型”的强化学习。',
+ p:['Tse 2007：大鼠逐渐学会一套“味道–位置”图式后，与之一致的新联想一次就能学会，并在 48 小时内转移到新皮层','学习新图式需要海马，提取旧图式则不需要'],a:['schema','图式','Bayesian prior','贝叶斯先验','Tse']},
+{id:'prefrontal',t:'mem',l:1,zh:'前额叶皮层',en:'Prefrontal cortex (PFC)',lec:['6.1','8.1','9.1'],
+ d:'位于额叶前部，负责高级认知：工作记忆、注意、决策与价值计算，也是久远记忆的储存地之一。啮齿类的内侧前额叶（mPFC）大致对应人类的背外侧前额叶（dlPFC）。',
+ p:['Daw 2006：内侧眶额皮层反映获得的回报，腹内侧前额叶（vmPFC）反映所选动作的概率'],a:['PFC','mPFC','dlPFC','vmPFC','OFC','眶额皮层','prefrontal','前额叶']},
+{id:'attention',t:'mem',l:1,zh:'注意与神经调质',en:'Attention & neuromodulators',lec:['9.1'],
+ d:'注意让大脑优先处理相关信息，它依赖前额叶，并受四大调质系统调节。吸引子网络理论认为，注意让“获胜”的神经元群放电更强，其他的更弱。',
+ p:['乙酰胆碱：来自基底前脑，提升唤醒水平和注意','多巴胺：来自 VTA 和黑质，与空间注意、目标选择和 ADHD 相关','去甲肾上腺素：来自蓝斑；适量（α2A 受体）改善工作记忆，过量（α1、β1 受体）反而损害','5-HT：来自中缝核，影响执行功能和冲动性'],a:['attention','注意','acetylcholine','乙酰胆碱','ACh','noradrenaline','norepinephrine','去甲肾上腺素','locus coeruleus','蓝斑','basal forebrain','attractor']},
+{id:'adhd',t:'mem',l:3,zh:'ADHD',en:'Attention deficit hyperactivity disorder',lec:['9.1','12.1'],
+ d:'注意缺陷多动障碍：注意力不集中、冲动、多动三联征。与影响多巴胺转运体的基因（如 DAT1）等遗传因素有关。常用药哌甲酯（MPH）阻断多巴胺和去甲肾上腺素转运体（DAT、NET）；赖右苯丙胺（LDX）增强多巴胺活动。',a:['ADHD','多动症','methylphenidate','哌甲酯','DAT1','DAT']},
+{id:'amygdala',t:'mem',l:1,zh:'杏仁核与情绪',en:'Amygdala & emotion',lec:['9.1'],
+ d:'边缘系统的核心，几乎与所有皮层区域相连，处于大脑网络的“几何中心”。调控恐惧条件化、情绪记忆、焦虑、攻击和社会认知，也参与食物、性、药物等奖赏性条件化。',
+ p:['基底外侧核（BLA）、中央核（CeA）、终纹床核（BNST，焦虑与应激）','恐惧学习：CS 与 US 的信息在外侧杏仁核汇合并诱导可塑性，再经中央核输出恐惧反应','Klüver–Bucy 综合征：猴子双侧颞叶切除后失去恐惧等情绪反应'],a:['amygdala','杏仁核','limbic system','边缘系统','BLA','CeA','BNST','Klüver–Bucy','emotion','情绪']},
+{id:'fear_cond',t:'mem',l:2,zh:'恐惧条件化',en:'Fear conditioning',lec:['6.1','8.1','9.1'],
+ d:'把中性刺激（CS，如声音或某个环境）与厌恶刺激（US，如轻微的足底电击）配对，动物学会对 CS 产生“冻结”反应。依赖杏仁核；“小阿尔伯特”实验（1920）是它的人类版本。它是研究长时记忆和记忆印迹的主力范式。',a:['fear conditioning','恐惧条件','freezing','冻结','Little Albert']},
+/* ---- 奖赏与决策 ---- */
+{id:'dopamine',t:'reward',l:1,zh:'多巴胺',en:'Dopamine',lec:['1.1','6.1','7.2','9.1','10.2','12.1'],
+ d:'由中脑腹侧被盖区（VTA）和黑质致密部（SNc）的神经元释放的单胺类调质，是本课程出现次数最多的分子之一。',
+ p:['学习：编码奖赏预测误差（RPE）','运动：黑质 → 纹状体，经 D1（兴奋）/ D2（抑制）受体调节直接和间接通路','疾病：SNc 多巴胺神经元死亡 → 帕金森病；成瘾药物劫持 VTA → 伏隔核通路；与注意和 ADHD 有关'],a:['DA','dopamine','VTA','SNc','substantia nigra','黑质','D1','D2','腹侧被盖区']},
+{id:'serotonin',t:'reward',l:2,zh:'5-羟色胺',en:'Serotonin (5-HT)',lec:['1.1','6.1','7.2','9.1'],
+ d:'来自脑干中缝核的单胺类调质。低 5-HT（如色氨酸耗竭）让人更看重眼前的回报、选择更冲动（时间折扣增大）；在情绪的计算模型中，低 5-HT 与抑郁和冒险倾向有关。它也影响学习、长时记忆和执行功能。',a:['5-HT','serotonin','血清素','tryptophan','色氨酸','raphe','中缝核']},
+{id:'conditioning',t:'reward',l:2,zh:'经典与操作条件化',en:'Classical & operant conditioning',lec:['6.1'],
+ d:'经典（巴甫洛夫）条件化：条件刺激（CS）预测非条件刺激（US），不需要做任何动作；操作（工具性）条件化：动作与奖赏相关联。',
+ p:['消退：CS 和 US 不再配对后，条件反应逐渐消失','阻断效应：一个线索已经能预测奖赏时，再加入的新线索学不到东西，因为没有预测误差'],a:['Pavlovian','巴甫洛夫','classical conditioning','operant','instrumental','操作条件','extinction','消退','blocking','阻断','CS','US']},
+{id:'rpe',t:'reward',l:1,zh:'奖赏预测误差',en:'Reward prediction error (RPE)',lec:['6.1','7.2'],
+ d:'RPE = 实际得到的奖赏 − 预期的奖赏。Schultz 1997 发现多巴胺神经元正是这样放电的。',
+ p:['意外的奖赏 → 爆发放电（正误差）','学习之后：反应从奖赏本身转移到预测奖赏的线索上','预期的奖赏没有出现 → 放电低于基线（负误差）','外侧缰核编码相反的信号，并抑制多巴胺神经元'],a:['RPE','prediction error','预测误差','Schultz','lateral habenula','外侧缰核']},
+{id:'rl',t:'reward',l:1,zh:'强化学习',en:'Reinforcement learning & TD learning',lec:['6.1'],
+ d:'智能体在状态 s 下选择动作 a、获得奖赏 r，目标是让长期累积的奖赏最大。时间差分（TD）学习用预测误差 δ = r + γ·V(s′) − V(s) 不断更新价值估计，这个 δ 正对应多巴胺信号。',
+ p:['V 值：一个状态的价值；Q 值：在状态 s 下做动作 a 的期望累积回报','Samejima 2005：猴子纹状体神经元的活动编码左 / 右两个动作的 Q 值'],a:['RL','reinforcement learning','TD','temporal difference','时间差分','Q-value','Q 值','Sutton']},
+{id:'explore',t:'reward',l:2,zh:'探索与利用',en:'Exploration–exploitation & action choice',lec:['6.1'],
+ d:'利用：选当前已知最好的选项，收获回报；探索：尝试其他选项，收获信息（将来可能更好）。',
+ p:['Softmax：选择概率随 Q 值增大；参数 β 越低越随机（多探索），越高越接近贪婪（多利用）','匹配律（Herrnstein 1961）：选项 1 回报为 4、选项 2 为 2 时，动物大约 2/3 的时间选 1','新奇感与多巴胺促进探索'],a:['softmax','exploration','exploitation','探索','利用','greedy','matching law','匹配律','β','beta']},
+{id:'discounting',t:'reward',l:2,zh:'时间折扣',en:'Temporal discounting & impulsivity',lec:['6.1','7.2'],
+ d:'未来的奖赏会被“打折”。TD 模型使用指数折扣（乘以 γᵗ），人类的选择则更符合双曲折扣：近期的折扣特别厉害，所以会出现“明知该等，却忍不住”的冲动选择。',a:['discounting','hyperbolic','exponential','双曲折扣','指数折扣','impulsivity','冲动']},
+{id:'decision',t:'reward',l:1,zh:'决策与证据积累',en:'Decision making & evidence accumulation',lec:['6.2'],
+ d:'大脑把随时间陆续到来的证据逐步累积成一个“决策变量”，达到阈值就做出选择。Yang & Shadlen 2007：猴子外侧顶内区（LIP）神经元的放电精确反映了证据权重的变化——大脑可以在无意识中计算概率。',a:['decision making','决策','evidence accumulation','证据积累','LIP','drift diffusion','Shadlen']},
+{id:'behav_econ',t:'reward',l:2,zh:'行为经济学',en:'Behavioural economics & prospect theory',lec:['6.2'],
+ d:'人类的决策常常偏离“理性”。',
+ p:['确定（p = 0 或 1）、风险（p 已知）、模糊（p 未知）','期望效用 EU = Σ p(x)·U(x)；凹的效用函数可以解释圣彼得堡悖论','阿莱悖论：人会对概率做主观加权；框架和诱饵效应也会改变选择','前景理论（Kahneman）：以参照点衡量得失、损失厌恶、概率加权'],a:['prospect theory','前景理论','loss aversion','损失厌恶','expected utility','期望效用','Allais','阿莱','St Petersburg','圣彼得堡','framing','框架效应','Kahneman','ambiguity','risk']},
+{id:'mood',t:'reward',l:2,zh:'心境与快乐',en:'Mood & happiness',lec:['7.2'],
+ d:'瞬时的快乐感主要由近期奖赏预测误差的累积决定（RPE 的效应最大，大于确定的奖赏或期望值）。心境可以看作对近期相似状态的泛化，像一种“动量”。',
+ p:['计算模型：对负性 RPE 的学习率低、5-HT 低 → 抑郁倾向和冒险','动量参数过高 → 情绪陷入循环、大起大落（双相障碍）','体验的自我与记忆的自我（Kahneman）'],a:['mood','心境','happiness','快乐','depression','抑郁','bipolar','双相','momentum']},
+{id:'habit',t:'reward',l:1,zh:'习惯',en:'Habits: model-free vs model-based',lec:['7.2'],
+ d:'习惯是习得的（不是反射）、快速高效、几乎不耗认知资源、而且很难改变的行为。',
+ p:['检验方法：奖赏贬值之后（比如已经吃饱），动物仍按原来的方式反应，说明是习惯','目标导向行为 ≈ 基于模型的强化学习；习惯 ≈ 无模型（缓存式）强化学习，学习率低、利用程度高','随着训练加深，控制权从背内侧纹状体（目标导向）转到背外侧纹状体（习惯）'],a:['habit','习惯','model-free','model-based','无模型','基于模型','devaluation','贬值','Graybiel']},
+{id:'addiction',t:'reward',l:1,zh:'成瘾',en:'Addiction',lec:['7.2'],
+ d:'成瘾药物劫持中脑 VTA → 伏隔核（NAc）的多巴胺奖赏通路，在分子和系统两个层面改变大脑。可以看作行为从目标导向 → 习惯 → 强迫的转变；即使戒断成功，也有复吸的风险。',
+ p:['风险因素：慢性应激、心理创伤、抑郁等精神疾病、遗传（如昼夜节律基因）','新奇寻求预测开始用药，冲动性预测发展为强迫性用药（Belin 2008）','高冲动大鼠的腹侧纹状体 D2/3 受体较少（Dalley 2007）','只有真正成瘾的动物，伏隔核 LTD 才长期受损（Kasanetz 2010）'],a:['addiction','成瘾','NAc','nucleus accumbens','伏隔核','cocaine','可卡因','relapse','复吸','compulsive','impulsivity']},
+{id:'tom',t:'reward',l:1,zh:'心理理论',en:'Theory of mind (ToM)',lec:['13.2'],
+ d:'意识到他人拥有与自己不同的心理状态（信念、知识、想法）。人类大约在 4–5 岁发展出来；非人动物是否具备仍有争议。',
+ p:['测试：错误信念任务（Sally–Anne 测试）、意外内容任务（比如糖果盒里其实装着铅笔）','AI 有没有心理理论？大模型能通过经典任务，但可能依赖训练数据里的捷径；这场争论推动了更严格的测试设计'],a:['ToM','theory of mind','false belief','错误信念','Sally-Anne','Sally–Anne']},
+{id:'empathy',t:'reward',l:2,zh:'共情',en:'Empathy',lec:['13.2'],
+ d:'一种模型把共情分为情感共情（“感受”：个人痛苦、同情）和认知共情（“知道”，接近心理理论）。Singer 2004 的 fMRI 研究发现：自己感到疼痛和看到爱人疼痛时，前扣带皮层和前脑岛都会被激活。',a:['empathy','共情','affective empathy','cognitive empathy','Singer','insula','脑岛','ACC','前扣带']},
+{id:'aggression',t:'reward',l:3,zh:'攻击行为',en:'Aggression',lec:['9.1','13.2'],
+ d:'旨在伤害另一个生命体的行为，分为身体攻击（打、踢、咬）与关系攻击（霸凌、排挤、散布流言）。儿童发育中，心理理论与身体攻击呈负相关；它与关系攻击的关系还不清楚。',a:['aggression','攻击','physical aggression','relational aggression']},
+{id:'mirror',t:'reward',l:2,zh:'镜像神经元',en:'Mirror neurons',lec:['13.2'],
+ d:'自己做某个动作、以及观察（看或听）别人做同一个动作时都会放电的神经元，最早由 di Pellegrino 1992 在猴子的腹侧运动前皮层发现。它常被用来解释共情和心理理论，但需要批判地看待：人类研究多为间接测量，镜像神经元对共情是否必要或充分、因果方向如何，都还不清楚。',a:['mirror neuron','镜像','di Pellegrino','premotor']},
+/* ---- 感觉与运动 ---- */
+{id:'retina',t:'sys',l:1,zh:'视网膜与光转导',en:'Retina & phototransduction',lec:['11.1'],
+ d:'角膜和晶状体把光聚焦到视网膜上。光感受器有两类：视杆细胞对光极其敏感（单个光子就能引起反应），负责夜视；视锥细胞集中在中央凹，恢复快、适应范围大，负责日间视觉、精细视觉和色觉。',
+ p:['光转导：光激活视紫红质（一种 GPCR）→ 级联放大 → cGMP 下降 → 阳离子通道关闭 → 光感受器超极化','三种视锥细胞（短、中、长波长，S / M / L）→ 三色视觉；视蛋白基因缺陷 → 色盲'],a:['retina','视网膜','rod','cone','视杆','视锥','phototransduction','光转导','rhodopsin','视紫红质','fovea','中央凹','color blindness','色盲','cGMP']},
+{id:'receptive',t:'sys',l:2,zh:'感受野与侧抑制',en:'Receptive fields & retinal circuits',lec:['11.1'],
+ d:'约 1 亿个光感受器的信息只能通过约 100 万个视网膜神经节细胞（RGC）送往大脑，所以视网膜先要提取有用的特征。双极细胞和 RGC 具有“中心–周边”拮抗的同心圆感受野，用来检测亮度对比。',
+ p:['OFF 双极细胞保持光感受器的信号符号（遇光超极化），ON 双极细胞把符号反转（遇光去极化）','中心–周边拮抗来自水平细胞的侧抑制，这也是很多视错觉的成因','方向选择性神经节细胞：星爆无长突细胞提供不对称的抑制'],a:['receptive field','感受野','center-surround','中心周边','RGC','ganglion cell','神经节细胞','bipolar','双极细胞','horizontal cell','水平细胞','amacrine','无长突','direction-selective']},
+{id:'visual_path',t:'sys',l:1,zh:'视觉通路与 V1',en:'Visual pathway & primary visual cortex',lec:['4.1','11.1'],
+ d:'RGC 的轴突组成视神经 → 视交叉（鼻侧纤维交叉到对侧，颞侧纤维不交叉）→ 视束 → 丘脑外侧膝状体（LGN）→ 初级视皮层（V1），形成有意识的视觉。',
+ p:['V1 的简单细胞对特定位置、特定朝向的明暗条纹反应；复杂细胞对朝向敏感、对位置不敏感（Hubel & Wiesel）','V1 按功能柱组织：朝向柱、眼优势柱'],a:['LGN','外侧膝状体','V1','visual cortex','视皮层','optic chiasm','视交叉','simple cell','complex cell','Hubel','Wiesel','orientation','朝向']},
+{id:'motor_hier',t:'sys',l:1,zh:'运动控制的层级',en:'Motor hierarchy',lec:['11.2','12.1'],
+ d:'中枢运动系统分三层：最高层（新皮层联合区 + 基底神经节）负责“策略”，即运动的目标；中间层（运动皮层 + 小脑）负责“战术”，即肌肉收缩的时空序列；最低层（脑干 + 脊髓）负责“执行”。',
+ p:['脊髓本身就有节律性的运动程序：脊髓与大脑断开的猫狗，后腿仍能产生节律性的行走动作（“无头鸡”）','这些程序由大脑的下行指令调用、执行和修饰'],a:['motor hierarchy','运动层级','strategy','tactics','CPG','central pattern generator']},
+{id:'motor_neuron',t:'sys',l:2,zh:'运动神经元',en:'Motor neurons & motor units',lec:['11.2'],
+ d:'下运动神经元的胞体位于脊髓前角或脑干的脑神经核，轴突经神经肌肉接头直接支配肌肉；上运动神经元位于大脑皮层或脑干，向下控制下运动神经元。',
+ p:['运动单位 = 一个 α 运动神经元 + 它支配的全部肌纤维；支配同一块肌肉的所有 α 运动神经元组成运动神经元池','γ 运动神经元支配肌梭内的梭内肌纤维，调节肌梭的敏感度；α–γ 共激活让肌梭在肌肉收缩时仍能报告长度'],a:['upper motor neuron','lower motor neuron','上运动神经元','下运动神经元','motor unit','运动单位','motor pool','alpha motor neuron','gamma motor neuron','NMJ','神经肌肉接头']},
+{id:'reflex',t:'sys',l:1,zh:'脊髓反射',en:'Spinal reflexes',lec:['11.2','12.1'],
+ d:'不需要大脑参与、由脊髓环路完成的快速反应。',
+ p:['牵张反射（膝跳反射）：肌梭被拉伸 → Ia 传入纤维 → 直接兴奋 α 运动神经元（单突触）→ 肌肉收缩','交互抑制：同时经 Ia 抑制性中间神经元让拮抗肌放松','屈肌回避反射：踩到钉子 → 多突触 → 屈肌收缩、抬腿；对侧伸肌反射：另一条腿伸直，维持平衡','反射减弱说明反射弧本身受损；反射亢进说明下行控制受损'],a:['stretch reflex','牵张反射','knee-jerk','膝跳','muscle spindle','肌梭','withdrawal reflex','flexor reflex','crossed-extensor','对侧伸肌','reciprocal inhibition','交互抑制','Ia']},
+{id:'motor_cortex',t:'sys',l:2,zh:'运动皮层',en:'Motor cortex (M1, PMA, SMA)',lec:['11.2','13.2'],
+ d:'初级运动皮层（M1）有一张躯体定位图（“运动小人”）；运动前区（PMA）和辅助运动区（SMA）同属 Brodmann 6 区，负责计划和指导熟练的随意运动。SMA 更多地直接支配远端肌肉，PMA 主要经网状脊髓束控制近端肌肉。',a:['M1','PMA','SMA','motor cortex','premotor','运动前区','supplementary motor area','辅助运动区','homunculus','area 6']},
+{id:'cerebellum',t:'sys',l:2,zh:'小脑',en:'Cerebellum',lec:['11.2'],
+ d:'负责运动的协调、时序和误差校正，生成精确定时的肌肉收缩序列；损伤会导致共济失调（ataxia）。它的主要输出细胞浦肯野细胞是 GABA 能的。',a:['cerebellum','小脑','ataxia','共济失调','Purkinje','浦肯野']},
+{id:'bg',t:'sys',l:1,zh:'基底神经节',en:'Basal ganglia',lec:['11.2','12.1'],
+ d:'大脑深部的一组核团：纹状体（尾状核 + 壳核）、苍白球（外侧部 GPe / 内侧部 GPi）、丘脑底核（STN）、黑质（致密部 SNc / 网状部 SNr）。它像一道“门”：放行需要的动作、抑制不需要的动作，并参与运动学习。',
+ p:['递质：GABA（抑制）、谷氨酸（兴奋；STN 是唯一纯兴奋性的内在通路）、多巴胺（D1 兴奋 / D2 抑制）、乙酰胆碱（调节）'],a:['basal ganglia','基底节','GPi','GPe','STN','subthalamic nucleus','丘脑底核','globus pallidus','苍白球','SNr']},
+{id:'striatum',t:'sys',l:1,zh:'纹状体',en:'Striatum',lec:['6.1','7.2','10.2','12.1'],
+ d:'基底神经节的主要输入核（背侧为尾状核和壳核，腹侧包括伏隔核），主体是 GABA 能的中型多棘神经元（MSN）。它接收皮层的谷氨酸输入和黑质的多巴胺输入，在运动、价值学习、习惯和成瘾中都处于核心位置。',a:['striatum','纹状体','MSN','medium spiny neuron','中型多棘神经元','caudate','putamen','尾状核','壳核']},
+{id:'direct_indirect',t:'sys',l:1,zh:'直接与间接通路',en:'Direct & indirect pathways',lec:['10.2','12.1'],
+ d:'基底神经节的两条平行回路，共同决定丘脑–皮层的运动输出。',
+ p:['直接通路（D1 型 MSN → GPi / SNr）：减少 GPi 对丘脑的抑制 → 促进想要的动作（Go）','间接通路（D2 型 MSN → GPe → STN → GPi）：加强 GPi 对丘脑的抑制 → 压制多余的动作（No-Go）','黑质多巴胺兴奋 D1、抑制 D2，两种效应都让运动更容易发生'],a:['direct pathway','indirect pathway','直接通路','间接通路','Go','No-Go','D1','D2']},
+{id:'descending',t:'sys',l:2,zh:'下行运动通路',en:'Descending motor tracts',lec:['11.2'],
+ d:'把大脑的运动指令传到脊髓（或脑干）的白质纤维束。',
+ p:['外侧通路（皮质脊髓侧束、红核脊髓束）：受皮层直接控制，负责四肢的随意运动','腹内侧通路（前庭脊髓束、网状脊髓束、顶盖脊髓束、皮质脊髓前束）：受脑干控制，负责姿势和平衡','皮质脊髓束（约 10⁶ 根轴突）控制躯干和四肢，在延髓锥体交叉；皮质延髓束控制头面部，多为双侧支配','损伤会出现上运动神经元体征：偏瘫、痉挛'],a:['corticospinal tract','皮质脊髓束','corticobulbar tract','皮质延髓束','pyramidal','锥体束','extrapyramidal','reticulospinal','vestibulospinal','rubrospinal','descending tract']},
+{id:'move_disorders',t:'sys',l:2,zh:'运动障碍',en:'Movement disorders',lec:['12.1'],
+ d:'引起异常运动的神经系统疾病，分两大类：运动减少型（hypokinetic，正常流畅的运动变少，如帕金森病）和运动过多型（hyperkinetic，出现不想要的不自主运动，如亨廷顿病、抽动秽语综合征）。病变可以在大脑、脊髓、基底神经节或小脑。',a:['movement disorder','hypokinetic','hyperkinetic','运动减少','运动过多']},
+{id:'tourette',t:'sys',l:3,zh:'抽动秽语综合征',en:'Tourette syndrome',lec:['12.1'],
+ d:'儿童期起病的神经发育障碍，表现为不自主的动作、声音和词语抽动。与基底神经节–辅助运动区的连接异常、GABA 偏低有关；抽动在儿童期最严重，约一半的患儿成年后抽动消失；多巴胺拮抗剂可以控制抽动。',a:['Tourette','妥瑞','tics','抽动']},
+/* ---- 神经退行 ---- */
+{id:'ndg',t:'degen',l:1,zh:'神经退行性疾病',en:'Neurodegeneration & protein misfolding',lec:['10.1','10.2'],
+ d:'神经退行 = 神经结构与功能的进行性丧失。许多这类疾病的共同标志是错误折叠蛋白的异常聚集。它们症状不同，是因为损伤的易感脑区和神经元不同：AD 的内嗅皮层和海马、PD 的黑质、HD 的纹状体、ALS 的运动神经元。',
+ p:['AD：Aβ 斑块 + tau 缠结；PD：α-突触核蛋白（路易小体）；HD：亨廷顿蛋白包涵体；ALS：TDP-43 包涵体；朊病毒病：PrP 斑块','同一种错误折叠的蛋白也可以导致多种疾病（如各种 tau 病）'],a:['neurodegeneration','神经退行','proteinopathy','misfolded protein','错误折叠','aggregate','聚集','NDD']},
+{id:'ad',t:'degen',l:1,zh:'阿尔茨海默病',en:'Alzheimer’s disease (AD)',lec:['10.1','10.2'],
+ d:'最常见的神经退行性疾病。症状：记忆丧失、时间和空间定向障碍、难以理解图像和距离、判断力下降、语言和人格改变。由两种病理来定义：细胞外的 Aβ 淀粉样斑块 + 细胞内的 tau 神经原纤维缠结。',
+ p:['Aβ 由淀粉样前体蛋白（APP）经 β- 和 γ-分泌酶切割产生，Aβ42 比 Aβ40 更容易聚集；tau 过度磷酸化后形成缠结','tau 病理按 Braak 分期扩散：蓝斑和内嗅皮层 → 海马 → 大部分新皮层','治疗：乙酰胆碱酯酶抑制剂、美金刚；2021 年起抗 Aβ 抗体（aducanumab、lecanemab、donanemab）陆续获批'],a:['AD','Alzheimer','阿尔茨海默','老年痴呆','amyloid','Aβ','abeta','tau','APP','Braak','plaque','tangle','斑块','缠结','lecanemab','donanemab']},
+{id:'ad_genetics',t:'degen',l:2,zh:'AD 的遗传',en:'Genetics of Alzheimer’s disease',lec:['10.1'],
+ d:'早发的家族性 AD（40–50 岁起病）由 APP、PSEN1、PSEN2 突变引起，突变多集中在分泌酶切割位点附近；唐氏综合征患者多一条含 APP 的 21 号染色体，30–40 岁就出现大量淀粉样沉积。但绝大多数 AD 是 65 岁以后起病的散发性病例，最重要的遗传风险因素是 ApoE ε4 等位基因（携带率从人群中的约 15% 升至患者中的约 40%）。',a:['ApoE','ApoE4','ε4','PSEN1','PSEN2','presenilin','familial','sporadic','家族性','散发性','5xFAD','Down syndrome']},
+{id:'pd',t:'degen',l:1,zh:'帕金森病',en:'Parkinson’s disease (PD)',lec:['10.2','12.1'],
+ d:'第二常见的神经退行性疾病。黑质致密部（SNc，因富含黑色素而呈黑色）的多巴胺神经元选择性死亡，纹状体的多巴胺减少，直接和间接通路同时失调。',
+ p:['运动三联征：运动迟缓、静止性震颤、肌强直，是典型的运动减少型障碍','病理：路易小体，主要由 α-突触核蛋白构成','常伴失眠：基底神经节的多巴胺参与睡眠调节'],a:['PD','Parkinson','帕金森','Lewy body','路易小体','bradykinesia','运动迟缓','tremor','震颤','rigidity']},
+{id:'pd_mech',t:'degen',l:2,zh:'PD 的病因',en:'PD mechanisms: α-synuclein & mitochondria',lec:['10.2'],
+ d:'大多数 PD 是散发性的，但 α-突触核蛋白基因（SNCA）的单个氨基酸突变或拷贝数增加就足以致病。线粒体功能障碍是核心环节。',
+ p:['MPTP（合成毒品时的杂质）在脑内转化为 MPP⁺，被多巴胺神经元选择性摄取，抑制线粒体复合体 I，引起类似 PD 的症状','隐性致病基因 PINK1、Parkin 与线粒体质量控制和蛋白降解有关','“身体起源型”与“大脑起源型”PD；突触核蛋白病还包括路易体痴呆、多系统萎缩（MSA）'],a:['α-synuclein','alpha-synuclein','α-syn','α-突触核蛋白','SNCA','MPTP','mitochondria','线粒体','PINK1','Parkin','MSA','synucleinopathy']},
+{id:'pd_treat',t:'degen',l:2,zh:'PD 的治疗',en:'Treating Parkinson’s disease',lec:['10.2','12.1'],
+ d:'目前的疗法都只能缓解症状，不能阻止神经元继续死亡。',
+ p:['左旋多巴（L-DOPA）：多巴胺不能通过血脑屏障，L-DOPA 可以，进入大脑后在剩余的神经元中转化为多巴胺；几年后疗效下降','深部脑刺激（DBS）：在 STN 或 GPi 植入电极，纠正基底神经节环路的异常，用于晚期患者','细胞替代疗法：移植由胚胎干细胞或 iPS 细胞分化来的多巴胺神经元；难点是数量、纯度和免疫排斥'],a:['L-DOPA','levodopa','左旋多巴','DBS','deep brain stimulation','深部脑刺激','cell replacement','iPSC','干细胞']},
+{id:'prion',t:'degen',l:1,zh:'朊病毒病',en:'Prion diseases & prion-like spread',lec:['10.2'],
+ d:'具有传染性的致死性神经退行性疾病（传染性海绵状脑病）。错误折叠的朊蛋白（PrPSc）作为模板，诱导正常的 PrP 也错误折叠：疾病通过“蛋白构象”而不是核酸传播，脑组织呈海绵状变性。',
+ p:['人类：克雅病（CJD）、变异型克雅病（vCJD，与疯牛病相关）、库鲁病、致死性家族性失眠症；动物：疯牛病（BSE）、羊瘙痒病','类朊传播：tau、α-syn、Aβ 也能像“种子”一样诱导聚集并在脑内扩散；曾有经尸源生长激素医源性传播 Aβ 病理的报道','RT-QuIC：利用种子扩增来检测和区分不同的错误折叠蛋白'],a:['prion','朊病毒','PrP','PrPSc','CJD','克雅病','BSE','疯牛病','kuru','库鲁','RT-QuIC','seeding','prion-like']},
+{id:'hd',t:'degen',l:1,zh:'亨廷顿病',en:'Huntington’s disease (HD)',lec:['10.2','12.1'],
+ d:'常染色体显性遗传病。HTT 基因中的 CAG 三核苷酸重复扩增，让亨廷顿蛋白带上过长的多聚谷氨酰胺（polyQ）链。纹状体（尤其是间接通路的 MSN）最先死亡 → 舞蹈样的不自主运动（运动过多型），伴有抑郁和认知障碍，发病后 10–20 年死亡。',
+ p:['CAG 重复超过 36 次可能发病，超过 39 次很可能发病；重复越多，发病越早（通常在 30–40 岁）','polyQ 本身就足以导致神经退行；不同的 polyQ 疾病症状不同，是因为各自干扰了不同的互作蛋白'],a:['HD','Huntington','亨廷顿','CAG','polyQ','chorea','舞蹈症','HTT','huntingtin']},
+{id:'als',t:'degen',l:2,zh:'肌萎缩侧索硬化',en:'Amyotrophic lateral sclerosis (ALS)',lec:['10.2'],
+ d:'大脑皮层的上运动神经元和脊髓前角的下运动神经元进行性退化的致死性疾病（俗称“渐冻症”）。约 10% 为显性遗传，90% 为散发性。',
+ p:['超过 95% 的患者有 TDP-43 包涵体：TDP-43 本应在细胞核内调控 RNA 加工，却错误定位并聚集在胞质中（功能丧失、毒性获得，还是两者都有？）','相关基因：C9orf72（内含子中 GGGGCC 六核苷酸重复扩增）、SOD1（200 多种突变）、FUS'],a:['ALS','渐冻症','TDP-43','C9orf72','SOD1','FUS','motor neuron disease']}
+];
+
+const E = [
+['neuron','ap','产生'],['neuron','synapse','通过突触通讯'],['glia','neuron','支持、包裹髓鞘'],['glia','synapse','回收递质、修剪突触'],
+['rmp','ap','去极化到阈值'],['rmp','chloride','反转电位的原理'],['ap','release','触发 Ca²⁺ 内流与释放'],['synapse','nt','释放'],
+['nt','receptors','作用于'],['receptors','ampar','离子型'],['receptors','nmdar','离子型'],['receptors','gabar','离子型 + 代谢型'],
+['receptors','presyn_mod','代谢型（GPCR）'],['ampar','epsp','产生快速 EPSP'],['epsp','ap','总和达到阈值'],['release','stp','初始 p 决定'],
+['presyn_mod','release','抑制'],['nt','dopamine','单胺类'],['nt','serotonin','单胺类'],['nt','gaba','氨基酸类（抑制性）'],
+['ephys','release','测量释放'],['ephys','ltp','记录 LTP'],['cv_uncaging','release','检出突触前变化'],['cv_uncaging','ampar_traffic','证明突触后表达'],
+['optogenetics','engram','激活印迹细胞'],['optogenetics','vip','揭示去抑制环路'],['behav_tasks','ltp_memory','检验学习'],['behav_tasks','fear_cond','常用范式'],
+['mri_dti','descending','追踪白质纤维束'],['mri_dti','fmri','同属 MRI'],['eeg_meg','oscillation','记录脑电波'],['eeg_meg','epilepsy','监测发作'],
+['eeg_meg','sleep','睡眠研究'],['fmri','eeg_meg','分辨率互补'],['fmri','working_mem','研究容量'],['fmri','empathy','疼痛共情实验'],
+['fmri','modeling','基于模型的分析'],['fmri','prefrontal','测到价值信号（vmPFC）'],['modeling','rl','拟合参数'],['modeling','mood','情绪的计算模型'],
+['hebb','ltp','实验对应'],['hebb','stdp','强调先后时序'],['nmdar','ltp','巧合检测，触发'],['nmdar','camkii','Ca²⁺ 内流激活'],
+['camkii','ltp','Ca²⁺ 多'],['camkii','ltd','Ca²⁺ 少 → 磷酸酶'],['ltp','ampar_traffic','突触后表达'],['ltd','ampar_traffic','AMPA 受体被移除'],
+['ampar','ampar_traffic','被插入或移除'],['ampar_traffic','silent','唤醒'],['ltp','pre_ltp','另一种形式'],['pre_ltp','release','提高 p'],
+['stdp','ltp','突触前先放电'],['stdp','ltd','突触后先放电'],['btsp','place_cells','快速形成位置野'],['btsp','ltp','秒级可塑性窗口'],
+['ltp','ltp_memory','是记忆吗？'],['ltp_memory','engram','诱导记忆的尝试'],['ltp','spines','树突棘增大、新生'],['spines','engram','印迹的结构基础'],
+['gaba','gabar','作用于'],['gabar','chloride','效果取决于'],['gabar','presyn_mod','GABA_B 位于突触前'],['gabar','shunting','Cl⁻ 电导'],
+['interneuron','gaba','主要释放'],['gaba','ei_balance','提供抑制'],['interneuron','inhib_forms','实现'],['interneuron','pv','类型之一'],
+['interneuron','sst','类型之一'],['interneuron','vip','类型之一'],['pv','inhib_forms','前馈抑制的主力'],['pv','oscillation','每个 γ 周期放电'],
+['vip','sst','抑制它（去抑制）'],['sst','ei_balance','防止兴奋失控'],['stp','interneuron','不同类型各不相同'],['oscillation','schizo','γ 振荡受损'],
+['pv','schizo','标记减少'],['nmdar','schizo','拮抗剂诱发类似症状'],['ei_balance','epilepsy','兴奋过强'],['ei_balance','schizo','抑制减弱'],
+['ei_balance','asd','主要假说之一'],['ei_balance','cp_gaba','“甜蜜点”'],['chloride','epilepsy','发作后 KCC2 下降'],['chloride','cp_gaba','随发育变化'],
+['chloride','asd','出生期 GABA 转换'],['gabar','epilepsy','突变致病、药物靶点'],['inhib_forms','receptive','侧抑制形成中心–周边'],['inhib_forms','reflex','交互抑制'],
+['gaba','striatum','MSN 是 GABA 能的'],['gaba','cerebellum','浦肯野细胞是 GABA 能的'],['oscillation','attention','脑波与注意'],['epilepsy','hm','为治疗癫痫切除海马'],
+['pv','cp_gaba','抑制的成熟'],
+['critical','odp','经典模型'],['critical','visual_path','弱视：视觉的关键期'],['critical','cp_gaba','时机由抑制决定'],['critical','nmda_switch','同时发生'],['odp','ltd','被遮眼突触发生 LTD'],
+['odp','visual_path','发生在 V1'],['nmda_switch','nmdar','亚基转换'],['ndd','asd','包括'],['ndd','tourette','包括'],['ndd','epilepsy','部分属于'],
+['ndd','schizo','或许属于'],['asd','fxs','单基因模型'],['fxs','critical','关键期推迟'],['fxs','ltd','mGluR-LTD 增强'],
+['asd','synapse','致病基因多与突触有关'],['ndd','ad_genetics','唐氏综合征 → 早发 AD'],['asd','tom','社交沟通困难'],
+['memory_types','hm','可以分离的证据'],['memory_types','working_mem','短时记忆的一种'],['memory_types','consolidation','短时 → 长时'],['hm','hippocampus','切除了'],
+['hippocampus','place_cells','含有'],['hippocampus','pattern_sep','齿状回负责'],['hippocampus','consolidation','先依赖，后转移'],['hippocampus','ltp','LTP 首次发现于此'],
+['hippocampus','pre_ltp','苔藓纤维突触'],['consolidation','prefrontal','久远记忆依赖'],['consolidation','sleep','睡眠重放促进'],['schema','consolidation','加速巩固'],
+['schema','habit','≈ 基于模型的强化学习'],['working_mem','prefrontal','依赖'],['working_mem','attention','注意分配资源'],['attention','prefrontal','依赖'],
+['attention','dopamine','调质之一'],['attention','serotonin','调质之一'],['attention','adhd','障碍'],['adhd','dopamine','多巴胺转运体相关'],
+['adhd','bg','相关回路'],['amygdala','fear_cond','必需'],['fear_cond','conditioning','厌恶性经典条件化'],['fear_cond','engram','常用范式'],
+['engram','hippocampus','存在于'],['engram','amygdala','CREB 分配实验'],['prefrontal','decision','价值与选择'],['amygdala','aggression','调节'],
+['dopamine','rpe','编码'],['rpe','rl','核心学习信号'],['conditioning','rpe','解释阻断等现象'],['rl','explore','动作选择'],
+['rl','discounting','对未来回报打折'],['rl','decision','价值 → 选择'],['striatum','rl','编码 Q 值'],['rl','habit','无模型与基于模型'],
+['serotonin','discounting','低 5-HT → 更冲动'],['serotonin','mood','低 5-HT → 抑郁倾向'],['rpe','mood','累积成快乐感'],['decision','behav_econ','系统性偏离理性'],
+['habit','striatum','背外侧纹状体'],['habit','addiction','习惯 → 强迫'],['addiction','dopamine','劫持 VTA → 伏隔核'],['addiction','ltd','伏隔核 LTD 受损'],
+['addiction','discounting','冲动性是风险因素'],['addiction','striatum','伏隔核（腹侧纹状体）'],['tom','empathy','≈ 认知共情'],['tom','aggression','与身体攻击负相关'],
+['mirror','empathy','被认为相关（存疑）'],['mirror','tom','被认为相关（存疑）'],['mirror','motor_cortex','位于运动前皮层'],['dopamine','direct_indirect','D1 兴奋 / D2 抑制'],
+['dopamine','pd','丢失导致'],
+['retina','receptive','视网膜内加工'],['retina','visual_path','RGC 轴突组成视神经'],['receptive','visual_path','经 LGN 传到 V1'],['retina','receptors','视紫红质是 GPCR'],
+['motor_hier','reflex','最低层：脊髓'],['motor_hier','motor_cortex','中间层'],['motor_hier','cerebellum','中间层'],['motor_hier','bg','最高层'],
+['motor_neuron','reflex','反射弧的输出'],['motor_cortex','descending','发出'],['descending','motor_neuron','控制下运动神经元'],['bg','striatum','输入核'],
+['bg','motor_cortex','经丘脑调节'],['striatum','direct_indirect','D1 / D2 型 MSN'],['direct_indirect','move_disorders','失衡导致'],['move_disorders','pd','运动减少型'],
+['move_disorders','hd','运动过多型'],['move_disorders','tourette','运动过多型'],['bg','tourette','与 SMA 连接异常'],['als','motor_neuron','上、下运动神经元退化'],
+['pd_treat','bg','DBS 刺激 STN / GPi'],
+['ndg','ad','Aβ / tau'],['ndg','pd','α-突触核蛋白'],['ndg','hd','亨廷顿蛋白'],['ndg','als','TDP-43'],['ndg','prion','PrP'],
+['ad','ad_genetics','遗传因素'],['ad','hippocampus','早期受累（Braak 分期）'],['ad','nmdar','治疗药美金刚阻断它'],['pd','pd_mech','病因'],
+['pd','pd_treat','治疗'],['pd','direct_indirect','两条通路都失调'],['pd_treat','dopamine','L-DOPA 补充'],['pd_mech','prion','α-syn 的类朊传播'],
+['hd','striatum','MSN 死亡'],['hd','direct_indirect','间接通路先受损'],['prion','ad','Aβ / tau 也能“播种”']
+];
+
+const TOUR = [
+['neuron','从最基本的单位开始：神经元由哪些部分组成，各自负责什么。'],
+['ap','神经元内部用电信号传递信息。先看动作电位是怎么产生的。'],
+['synapse','信号怎样从一个神经元传到下一个：电突触和化学突触。'],
+['nt','化学突触使用的“语言”：五大类神经递质。'],
+['release','突触的强度可以拆成三个数相乘：n × p × a。'],
+['nmdar','记住这个分子：它会在可塑性、发育、精神分裂症和阿尔茨海默病里反复出现。'],
+['ltp','突触会根据活动变强，这就是 LTP。'],
+['ltp_memory','LTP 真的就是记忆吗？看看需要哪四类证据。'],
+['gaba','故事的另一半是抑制。先认识 GABA。'],
+['inhib_forms','抑制在环路里有几种固定的组织方式。'],
+['interneuron','抑制性细胞种类很多，每一类都有自己的分工。'],
+['ei_balance','兴奋与抑制失衡，是癫痫、精神分裂症和自闭症的共同线索。'],
+['critical','发育中的“关键期”：经验在特定时间窗内塑造大脑。'],
+['hippocampus','记忆的核心结构：海马和它的三突触环路。'],
+['consolidation','记忆怎样从海马转移到新皮层，长期保存下来。'],
+['dopamine','多巴胺：学习、运动和成瘾都绕不开它。'],
+['rpe','多巴胺神经元传递的其实是“预测误差”。'],
+['rl','用强化学习的数学语言来描述学习和选择。'],
+['addiction','当奖赏系统被药物劫持：从习惯到成瘾。'],
+['visual_path','感觉系统的代表：视觉信息怎样从眼睛到达皮层。'],
+['motor_hier','运动系统分三层控制：策略、战术、执行。'],
+['direct_indirect','基底神经节的两条通路：一条放行动作，一条压制动作。'],
+['ndg','神经退行性疾病的共同主题：蛋白质错误折叠。'],
+['fmri','最后看看我们怎样在活人的大脑里研究这些问题。']
+];
+
+const THREADS = [
+{id:'nmda',title:'一个分子，半门课：NMDA 受体',nodes:['nmdar','ltp','camkii','nmda_switch','schizo','ad'],
+ text:'NMDA 受体只有在“谷氨酸结合 + 突触后去极化”同时出现时才开放，这让它成为 LTP 的开关（Ca²⁺ → CaMKII）。发育中它的亚基从 GluN2B 换成 GluN2A，影响关键期的可塑性；ketamine、PCP 等拮抗剂能诱发类似精神分裂症的症状；另一种拮抗剂美金刚则被用来治疗阿尔茨海默病。'},
+{id:'ei',title:'兴奋与抑制的平衡',nodes:['ei_balance','gaba','chloride','pv','cp_gaba','epilepsy','schizo','asd'],
+ text:'大脑需要兴奋与抑制“刚刚好”。GABA 的效果取决于 Cl⁻ 梯度（KCC2 / NKCC1）；抑制的成熟决定关键期何时开启；兴奋过强导致癫痫，发作又会降低 KCC2，形成恶性循环；PV 细胞的抑制减弱与精神分裂症相关；E/I 失衡也是自闭症的主要假说之一。'},
+{id:'da',title:'多巴胺：学习、运动与成瘾',nodes:['dopamine','rpe','rl','striatum','direct_indirect','pd','addiction','adhd'],
+ text:'中脑多巴胺神经元编码奖赏预测误差，正对应强化学习中的 TD 误差。它投射到纹状体，经 D1 / D2 受体调节直接和间接通路来控制运动：多巴胺神经元死亡导致帕金森病；成瘾药物劫持 VTA → 伏隔核的奖赏通路；多巴胺转运体的异常还与 ADHD 有关。'},
+{id:'mem',title:'从突触到记忆',nodes:['hebb','ltp','spines','ltp_memory','engram','hippocampus','consolidation','sleep'],
+ text:'Hebb 设想“A 促使 B 放电，A→B 就变强”，LTP 是它的实验版本：Ca²⁺ 激活 CaMKII、AMPA 受体被插入、树突棘变大。被增强的连接把一群神经元组织成记忆印迹；新记忆起初依赖海马，之后借助睡眠中的重放等过程，逐渐巩固到新皮层。'},
+{id:'prot',title:'错误折叠的蛋白质',nodes:['ndg','ad','pd','pd_mech','hd','als','prion'],
+ text:'AD、PD、HD、ALS 和朊病毒病看似不同，却有同一个主题：蛋白质错误折叠并聚集（Aβ / tau、α-突触核蛋白、亨廷顿蛋白、TDP-43、PrP）。错误的构象还能像朊病毒一样在细胞间“播种”传播；不同疾病症状各异，是因为它们损伤的易感神经元群不同。'},
+{id:'str',title:'纹状体：价值、习惯与疾病',nodes:['striatum','gaba','rl','habit','addiction','direct_indirect','hd'],
+ text:'纹状体是基底神经节的输入核，主体是 GABA 能的中型多棘神经元（MSN）。它编码动作的价值（Q 值）；从目标导向到习惯的转变发生在这里（背内侧 → 背外侧）；腹侧的伏隔核是成瘾的关键靶区；亨廷顿病最先损伤的，正是纹状体间接通路的 MSN。'}
+];
+
+const CARDS = [
+{t:'basic',n:'rmp',q:'静息电位主要由什么维持？',a:'Na⁺/K⁺-ATP 酶建立离子浓度梯度，加上始终开放的 K⁺ 漏通道，让膜内保持在约 −70 mV，接近 K⁺ 的平衡电位。'},
+{t:'basic',n:'release',q:'突触强度公式 n × p × a 中，三个字母分别代表什么？',a:'n 是释放位点数，p 是释放概率，a 是量子幅度（单个囊泡在单个突触上引起的反应）。'},
+{t:'basic',n:'stp',q:'为什么初始释放概率高的突触，常常表现为成对脉冲抑制（PPD）？',a:'第一个刺激就用掉了大部分已停靠的囊泡，第二个刺激到来时可释放的囊泡变少了。反过来，p 低的突触因为残余 Ca²⁺ 的累积，常表现为成对脉冲易化（PPF）。'},
+{t:'method',n:'ephys',q:'电压钳和电流钳有什么区别？',a:'电压钳把膜电位固定住、测量电流（EPSC），适合定量研究递质释放；电流钳测量膜电位（EPSP），反映细胞的真实反应，但多个 EPSP 不能简单地线性相加（越接近反转电位，驱动力越小）。'},
+{t:'method',n:'fmri',q:'EEG、MEG、fMRI 的时间和空间分辨率怎么比较？',a:'空间分辨率：EEG < MEG < fMRI；时间分辨率：fMRI < EEG ≈ MEG。成本上 EEG 最低。'},
+{t:'method',n:'fmri',q:'为什么 fMRI 分析必须做多重比较校正？',a:'要对几万个体素同时做统计检验，不校正就会出现大量假阳性。常用 Bonferroni（FWE）或 FDR；有先验假设时，可以只检验感兴趣区（小体积校正）。'},
+{t:'plast',n:'nmdar',q:'为什么说 NMDA 受体是“巧合检测器”？',a:'静息时它被 Mg²⁺ 堵住。只有谷氨酸结合、并且突触后膜同时去极化（赶走 Mg²⁺），它才让 Ca²⁺ 进入，从而触发 LTP。'},
+{t:'plast',n:'ampar_traffic',q:'怎样判断 LTP 发生在突触前还是突触后？',a:'看成对脉冲比和 CV 分析（1/CV²）是否改变：改变提示突触前机制；还可以用谷氨酸解笼锁直接检测突触后的敏感性。海马 CA1 的经典 LTP 主要发生在突触后（插入 AMPA 受体）。'},
+{t:'plast',n:'ltp_memory',q:'要证明“LTP 是记忆的基础”，需要哪四类证据？',a:'① 阻断 LTP 会阻止学习；② 学习会诱导 LTP；③ 逆转 LTP 会抹去记忆；④ 人为诱导 LTP 能产生记忆。前三类已有支持，第四类还没有直接实现。'},
+{t:'inhib',n:'chloride',q:'为什么幼年动物的 GABA 是去极化的？',a:'幼年神经元 NKCC1 多、KCC2 少，胞内 Cl⁻ 浓度高，Cl⁻ 的反转电位高于静息电位；GABA_A 通道打开时 Cl⁻ 外流，细胞反而去极化。'},
+{t:'inhib',n:'inhib_forms',q:'前馈抑制有什么作用？',a:'中间神经元和主细胞接收同一个输入，并稍晚一点抑制主细胞，只给主细胞留下一个很短的放电时间窗，从而精确控制放电时机。主要由 PV 细胞完成。'},
+{t:'inhib',n:'schizo',q:'哪些证据把精神分裂症和抑制联系起来？',a:'患者死后的脑中 GAD67 和 PV 细胞标记减少；认知任务中 γ 振荡减弱；NMDA 受体拮抗剂可能通过 PV 细胞诱发类似症状。不过，增强 GABA 的药物试验至今没有成功。'},
+{t:'dev',n:'critical',q:'什么是关键期？举一个例子。',a:'发育中正常感觉经验必不可少的一段时间窗。例如儿童的白内障或斜视如果没有及时纠正，就会造成弱视；小鹅孵出后的印刻也是关键期现象。'},
+{t:'dev',n:'cp_gaba',q:'抑制怎样影响关键期的时机？',a:'关键期在抑制与兴奋的比例达到“甜蜜点”时开启：苯二氮䓬或 BDNF 使它提前；黑暗饲养、GAD65 敲除使它推迟。'},
+{t:'dev',n:'fxs',q:'脆性 X 综合征的分子原因是什么？小鼠模型有哪些发现？',a:'FMR1 基因沉默导致 FMRP 缺失。小鼠中突触蛋白合成过多、mGluR5 依赖的 LTD 增强、关键期推迟。降低 mGluR5 在小鼠中有效，但人体试验令人失望。'},
+{t:'mem',n:'hm',q:'病人 H.M. 告诉了我们什么？',a:'切除双侧内侧颞叶（含海马）后，他无法形成新的陈述性记忆，却仍能学会新的运动技能。说明海马对陈述性记忆至关重要，而不同的记忆系统可以分离。'},
+{t:'mem',n:'hippocampus',q:'海马的三突触环路是怎样的？',a:'内嗅皮层 →（穿通纤维）→ 齿状回 →（苔藓纤维）→ CA3 →（Schaffer 侧支）→ CA1。'},
+{t:'mem',n:'engram',q:'什么样的神经元更容易成为记忆印迹的一部分？',a:'学习时兴奋性相对更高的神经元（例如过表达 CREB 的细胞）会在“竞争”中胜出，被招募进印迹。'},
+{t:'reward',n:'rpe',q:'学习前后，多巴胺神经元对奖赏的反应有什么变化？',a:'学习前，意外的奖赏引起爆发放电；学习后，反应转移到预测奖赏的线索上；如果预期的奖赏没有出现，放电会降到基线以下。这正是奖赏预测误差。'},
+{t:'reward',n:'explore',q:'softmax 规则中的参数 β 起什么作用？',a:'调节探索与利用：β 低，选择接近随机（多探索）；β 高，几乎总是选 Q 值最高的动作（接近贪婪，多利用）。'},
+{t:'reward',n:'behav_econ',q:'前景理论的核心观点是什么？',a:'人用一个参照点来衡量得失；同样大小的损失比收益感受更强（损失厌恶）；人会对概率做主观加权。'},
+{t:'reward',n:'habit',q:'用什么实验区分习惯和目标导向行为？',a:'奖赏贬值：如果奖赏已经没有价值了，动物仍然按原来的方式反应，说明这个行为已经成为习惯（对应无模型强化学习）。'},
+{t:'sys',n:'retina',q:'视杆细胞和视锥细胞有什么区别？',a:'视杆细胞的光转导放大更强、对光更敏感，主要负责夜视；视锥细胞集中在中央凹、恢复更快，负责日间视觉、精细视觉和色觉（S / M / L 三种）。'},
+{t:'sys',n:'reflex',q:'膝跳反射的通路是怎样的？',a:'叩击髌腱 → 股四头肌的肌梭被拉伸 → Ia 传入纤维直接兴奋 α 运动神经元（单突触）→ 股四头肌收缩；同时经抑制性中间神经元让拮抗的屈肌放松（交互抑制）。'},
+{t:'sys',n:'direct_indirect',q:'基底神经节的直接通路和间接通路各有什么作用？',a:'直接通路（D1 型 MSN）解除 GPi 对丘脑的抑制，促进想要的动作；间接通路（D2 型 MSN）加强这种抑制，压制不想要的动作。'},
+{t:'degen',n:'ad',q:'阿尔茨海默病的两大病理标志是什么？',a:'细胞外的 Aβ 淀粉样斑块（APP 经 β- 和 γ-分泌酶切割产生），以及细胞内过度磷酸化的 tau 形成的神经原纤维缠结。'},
+{t:'degen',n:'pd_treat',q:'为什么 L-DOPA 治疗帕金森病几年后效果会下降？',a:'L-DOPA 需要由剩余的多巴胺神经元转化为多巴胺，而这些神经元仍在不断死亡：药物只能缓解症状，不能阻止疾病进展。'},
+{t:'degen',n:'prion',q:'朊病毒病为什么具有“传染性”？',a:'错误折叠的 PrPSc 可以作为模板，诱导正常的 PrP 也错误折叠，这种构象变化不断复制、传播。'}
+];
+
+const ABBR = [
+['AIS','Axon initial segment','轴突始段'],['AMPAR / NMDAR','AMPA / NMDA receptor','AMPA / NMDA 受体'],['mGluR','Metabotropic glutamate receptor','代谢型谷氨酸受体'],
+['GPCR','G protein-coupled receptor','G 蛋白偶联受体'],['EPSP / EPSC','Excitatory postsynaptic potential / current','兴奋性突触后电位 / 电流'],['IPSP / IPSC','Inhibitory postsynaptic potential / current','抑制性突触后电位 / 电流'],
+['VGCC','Voltage-gated calcium channel','电压门控钙通道'],['PPF / PPD','Paired-pulse facilitation / depression','成对脉冲易化 / 抑制'],['PTP','Post-tetanic potentiation','强直后增强'],
+['LTP / LTD','Long-term potentiation / depression','长时程增强 / 抑制'],['STDP','Spike-timing-dependent plasticity','锋电位时序依赖可塑性'],['BTSP','Behavioural timescale synaptic plasticity','行为时间尺度突触可塑性'],
+['CaMKII','Ca²⁺/calmodulin-dependent protein kinase II','钙 / 钙调蛋白依赖性蛋白激酶 II'],['ChR2','Channelrhodopsin-2','通道视紫红质 2'],['GAD','Glutamic acid decarboxylase','谷氨酸脱羧酶'],
+['VGAT','Vesicular GABA transporter','囊泡 GABA 转运体'],['KCC2 / NKCC1','K⁺–Cl⁻ / Na⁺–K⁺–Cl⁻ cotransporter','钾氯 / 钠钾氯共转运体'],['PV / SST','Parvalbumin / Somatostatin','小白蛋白 / 生长抑素'],
+['VIP / CCK','Vasoactive intestinal peptide / Cholecystokinin','血管活性肠肽 / 胆囊收缩素'],['ODP','Ocular dominance plasticity','眼优势可塑性'],['BDNF','Brain-derived neurotrophic factor','脑源性神经营养因子'],
+['ASD / ID','Autism spectrum disorder / Intellectual disability','自闭症谱系障碍 / 智力障碍'],['FXS / FMRP','Fragile X syndrome / Fragile X protein (FMR1)','脆性 X 综合征 / 脆性 X 蛋白'],['MTL','Medial temporal lobe','内侧颞叶'],
+['DG / CA1 / CA3','Dentate gyrus / Cornu ammonis fields','齿状回 / 海马 CA 区'],['MEC / LEC','Medial / lateral entorhinal cortex','内侧 / 外侧内嗅皮层'],['mPFC / dlPFC','Medial / dorsolateral prefrontal cortex','内侧 / 背外侧前额叶'],
+['vmPFC / OFC','Ventromedial prefrontal / orbitofrontal cortex','腹内侧前额叶 / 眶额皮层'],['CREB','cAMP response element-binding protein','cAMP 反应元件结合蛋白'],['SWS / REM','Slow-wave sleep / Rapid eye movement sleep','慢波睡眠 / 快速眼动睡眠'],
+['ADHD','Attention deficit hyperactivity disorder','注意缺陷多动障碍'],['BLA / CeA','Basolateral / central amygdala','基底外侧杏仁核 / 中央杏仁核'],['BNST','Bed nucleus of the stria terminalis','终纹床核'],
+['CS / US','Conditioned / unconditioned stimulus','条件刺激 / 非条件刺激'],['RPE','Reward prediction error','奖赏预测误差'],['RL / TD','Reinforcement learning / Temporal difference','强化学习 / 时间差分'],
+['VTA / NAc','Ventral tegmental area / Nucleus accumbens','腹侧被盖区 / 伏隔核'],['LIP','Lateral intraparietal area','外侧顶内区'],['EU','Expected utility','期望效用'],
+['ToM','Theory of mind','心理理论'],['RGC','Retinal ganglion cell','视网膜神经节细胞'],['LGN / V1','Lateral geniculate nucleus / Primary visual cortex','外侧膝状体 / 初级视皮层'],
+['M1 / PMA / SMA','Primary motor cortex / Premotor area / Supplementary motor area','初级运动皮层 / 运动前区 / 辅助运动区'],['NMJ','Neuromuscular junction','神经肌肉接头'],['MSN','Medium spiny neuron','中型多棘神经元'],
+['GPe / GPi','Globus pallidus external / internal segment','苍白球外侧部 / 内侧部'],['STN','Subthalamic nucleus','丘脑底核'],['SNc / SNr','Substantia nigra pars compacta / reticulata','黑质致密部 / 网状部'],
+['DBS','Deep brain stimulation','深部脑刺激'],['L-DOPA','Levodopa','左旋多巴'],['MPTP','A neurotoxin that kills dopamine neurons','一种选择性杀伤多巴胺神经元的神经毒素'],
+['AD / PD','Alzheimer’s / Parkinson’s disease','阿尔茨海默病 / 帕金森病'],['HD / ALS','Huntington’s disease / Amyotrophic lateral sclerosis','亨廷顿病 / 肌萎缩侧索硬化'],['APP / PSEN','Amyloid precursor protein / Presenilin','淀粉样前体蛋白 / 早老素'],
+['ApoE','Apolipoprotein E','载脂蛋白 E'],['TDP-43','TAR DNA-binding protein 43','TAR DNA 结合蛋白 43'],['CJD / BSE','Creutzfeldt–Jakob disease / Bovine spongiform encephalopathy','克雅病 / 疯牛病'],
+['RT-QuIC','Real-time quaking-induced conversion','实时震荡诱导转化（种子扩增检测）'],['MRI / fMRI','(Functional) magnetic resonance imaging','（功能）磁共振成像'],['BOLD','Blood-oxygen-level-dependent','血氧水平依赖'],
+['DTI / FA','Diffusion tensor imaging / Fractional anisotropy','弥散张量成像 / 各向异性分数'],['EEG / MEG','Electro- / Magnetoencephalography','脑电图 / 脑磁图'],['MVPA','Multi-voxel pattern analysis','多体素模式分析'],
+['GLM','General linear model','一般线性模型'],['FWE / FDR','Family-wise error / False discovery rate','族错误率 / 错误发现率'],['5-CSRTT','Five-choice serial reaction time task','五选择序列反应时任务']
+];
+/* DATA END */
+
+/* ---------- helpers ---------- */
+const $ = (s, r) => (r || document).querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+const fmt = s => esc(s).replace(/GABA_([AB])/g, 'GABA<sub>$1</sub>');
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const firstSentence = s => { const i = s.indexOf('。'); return i > 0 ? s.slice(0, i + 1) : s; };
+const store = {get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k, v){ try { localStorage.setItem(k, v); } catch(e){} }};
+const mq = q => (window.matchMedia ? window.matchMedia(q) : {matches:false});
+const reduceMotion = mq('(prefers-reduced-motion: reduce)').matches;
+const LEC = new Map(LECTURES.map(([c, en, zh]) => [c, {en, zh}]));
+const NS = 'http://www.w3.org/2000/svg';
+function svgEl(tag, attrs){ const e = document.createElementNS(NS, tag); if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]); return e; }
+
+/* ---------- index ---------- */
+const byId = new Map();
+N.forEach((n, i) => { n.i = i; n.nb = []; n.a = n.a || []; n.p = n.p || []; byId.set(n.id, n); });
+const links = [];
+for (const [s, t, label] of E) {
+  const a = byId.get(s), b = byId.get(t);
+  if (!a || !b) { console.warn('Unknown node in edge:', s, t); continue; }
+  const L = {s:a, t:b, label};
+  links.push(L);
+  a.nb.push({n:b, L, dir:'out'});
+  b.nb.push({n:a, L, dir:'in'});
+}
+const searchKey = n => [n.zh, n.en, ...n.a].join(' ').toLowerCase();
+N.forEach(n => { n.key = searchKey(n); });
+
+document.querySelectorAll('[data-count]').forEach(el => {
+  const k = el.dataset.count;
+  el.textContent = k === 'nodes' ? N.length : k === 'links' ? links.length : k === 'lectures' ? LECTURES.length : '';
+});
+
+/* ---------- node geometry ---------- */
+function textUnits(s){ let w = 0; for (const ch of s) w += /[⺀-鿿＀-￯　-〿]/.test(ch) ? 1 : (/[A-Z0-9]/.test(ch) ? .64 : .52); return w; }
+for (const n of N) {
+  n.deg = n.nb.length;
+  const base = n.l === 1 ? 7.5 : n.l === 2 ? 5.2 : 4.2;
+  n.r = base + Math.sqrt(n.deg) * 0.95;
+  const fs = n.l === 1 ? 21 : n.l === 2 ? 14.6 : 9.8;
+  const lh = fs * 1.3;
+  n.hw = Math.max(n.r + 4, textUnits(n.zh) * fs / 2 + 6);
+  n.hh = (2 * n.r + 3 + lh) / 2 + 3;
+  n.dy = (3 + lh) / 2;
+}
+for (const L of links) {
+  const same = L.s.t === L.t.t;
+  L.dist = same ? 70 + L.s.r + L.t.r : 120;
+  L.str = (same ? 1 : 0.45) / Math.min(L.s.deg, L.t.deg);
+  L.bias = L.s.deg / (L.s.deg + L.t.deg);
+}
+
+/* ---------- state ---------- */
+const state = {sel:null, hover:null, ctx:null, tour:null, core:false};
+
+/* ---------- graph DOM ---------- */
+const svg = $('#graph');
+const gRoot = svgEl('g'), gT = svgEl('g', {class:'g-themes'}), gE = svgEl('g', {class:'g-edges'}), gN = svgEl('g', {class:'g-nodes'}), gL = svgEl('g', {class:'g-elabels'});
+gRoot.append(gT, gE, gN, gL);
+svg.append(gRoot);
+for (const L of links) { L.el = svgEl('line', {class:'edge'}); gE.append(L.el); }
+for (const n of N) {
+  const g = svgEl('g', {class:'node t-' + n.t + ' l' + n.l, 'data-id':n.id});
+  g.append(svgEl('circle', {class:'halo', r:(n.r * 2.3).toFixed(1)}), svgEl('circle', {class:'core', r:n.r.toFixed(1)}));
+  const tx = svgEl('text', {class:'lbl', y:(n.r + 3).toFixed(1)}); tx.textContent = n.zh; g.append(tx);
+  gN.append(g); n.g = g;
+}
+const tLabels = {};
+for (const t of THEME_ORDER) { const tx = svgEl('text', {class:'tlabel t-' + t}); tx.textContent = THEMES[t].short; gT.append(tx); tLabels[t] = {el:tx, x:0, y:0, w:0}; }
+
+/* ---------- layout ---------- */
+let seed = 20260527;
+const rand = () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296;
+let anchor = {};
+function initLayout(W, H){
+  const wide = W / H >= 1.05;
+  const Rx = wide ? 640 : 430, Ry = wide ? 400 : 660;
+  const ring = ['basic','plast','mem','reward','sys','degen','dev','inhib'];
+  anchor = {method:{x:0, y:0}};
+  ring.forEach((t, i) => { const a = -3 * Math.PI / 4 + i * Math.PI / 4; anchor[t] = {x:Rx * Math.cos(a), y:Ry * Math.sin(a)}; });
+  for (const n of N) { const A = anchor[n.t]; n.x = A.x + (rand() - .5) * 160; n.y = A.y + (rand() - .5) * 160; n.vx = n.vy = 0; n.fx = n.fy = null; }
+}
+const P = {charge:-260, dmax2:600 * 600, anchor:0.07, coll:0.55, vdecay:0.58};
+function forces(alpha){
+  const len = N.length;
+  for (let i = 0; i < len; i++) {
+    const a = N[i];
+    for (let j = i + 1; j < len; j++) {
+      const b = N[j];
+      let dx = b.x - a.x, dy = b.y - a.y, l2 = dx * dx + dy * dy;
+      if (l2 < 1e-6) { dx = (rand() - .5) * .01; dy = (rand() - .5) * .01; l2 = dx * dx + dy * dy; }
+      if (l2 < P.dmax2) { const w = P.charge * alpha / Math.max(l2, 100); a.vx += dx * w; a.vy += dy * w; b.vx -= dx * w; b.vy -= dy * w; }
+      const ddy = (b.y + b.dy) - (a.y + a.dy);
+      const ox = a.hw + b.hw - Math.abs(dx), oy = a.hh + b.hh - Math.abs(ddy);
+      if (ox > 0 && oy > 0) {
+        if (ox < oy) { const s = (dx < 0 ? -1 : 1) * ox * .5 * P.coll; a.vx -= s; b.vx += s; }
+        else { const s = (ddy < 0 ? -1 : 1) * oy * .5 * P.coll; a.vy -= s; b.vy += s; }
+      }
+    }
+  }
+  for (const L of links) {
+    const s = L.s, t = L.t;
+    let x = t.x + t.vx - s.x - s.vx, y = t.y + t.vy - s.y - s.vy;
+    let l = Math.sqrt(x * x + y * y) || 1e-6;
+    l = (l - L.dist) / l * alpha * L.str; x *= l; y *= l;
+    t.vx -= x * L.bias; t.vy -= y * L.bias; s.vx += x * (1 - L.bias); s.vy += y * (1 - L.bias);
+  }
+  for (const n of N) { const A = anchor[n.t]; n.vx += (A.x - n.x) * P.anchor * alpha; n.vy += (A.y - n.y) * P.anchor * alpha; }
+  for (const n of N) {
+    if (n.fx != null) { n.x = n.fx; n.vx = 0; } else { n.vx *= P.vdecay; n.x += n.vx; }
+    if (n.fy != null) { n.y = n.fy; n.vy = 0; } else { n.vy *= P.vdecay; n.y += n.vy; }
+  }
+}
+const sim = {
+  alpha:1, target:0, running:false, aMin:.002, aDecay:1 - Math.pow(.001, 1 / 300),
+  tick(){ this.alpha += (this.target - this.alpha) * this.aDecay; forces(this.alpha); },
+  start(){
+    if (this.running) return; this.running = true;
+    const loop = () => {
+      this.tick(); render();
+      if (this.alpha > this.aMin || this.target > 0) requestAnimationFrame(loop);
+      else { this.running = false; placeThemeLabels(); }
+    };
+    requestAnimationFrame(loop);
+  },
+  heat(t){ this.target = t; if (this.alpha < t) this.alpha = t; this.start(); },
+  cool(){ this.target = 0; }
+};
+
+/* ---------- render ---------- */
+let edgeLabelList = [];
+function render(){
+  for (const n of N) n.g.setAttribute('transform', 'translate(' + n.x.toFixed(1) + ' ' + n.y.toFixed(1) + ')');
+  for (const L of links) { const e = L.el; e.setAttribute('x1', L.s.x.toFixed(1)); e.setAttribute('y1', L.s.y.toFixed(1)); e.setAttribute('x2', L.t.x.toFixed(1)); e.setAttribute('y2', L.t.y.toFixed(1)); }
+  placeEdgeLabels();
+}
+function placeEdgeLabels(){
+  // Relation labels are placed greedily along their edge, avoiding concept names and each other;
+  // a label that has no free spot is simply not drawn (the panel lists every relation anyway).
+  if (!edgeLabelList.length) return;
+  const rootFs = 12.5 / Math.pow(view.k, .8), fs = rootFs * .76, lh = fs * 1.3;
+  const boxes = [];
+  for (const n of N) {
+    const c = n.g.classList;
+    if (!(c.contains('hl') || c.contains('sel')) || c.contains('hidden')) continue;
+    const nfs = rootFs * (n.l === 1 ? 1.08 : n.l === 2 ? .94 : .86), w = textUnits(n.zh) * nfs;
+    boxes.push({x0:n.x - Math.max(w / 2, n.r) - 3, x1:n.x + Math.max(w / 2, n.r) + 3, y0:n.y - n.r - 3, y1:n.y + n.r + 4 + nfs * 1.3});
+  }
+  const focus = byId.get(state.hover) || byId.get(state.sel);
+  const len = L => Math.hypot(L.t.x - L.s.x, L.t.y - L.s.y);
+  for (const L of edgeLabelList.slice().sort((a, b) => len(b) - len(a))) {
+    const w = textUnits(L.label) * fs + 6;
+    let from = L.s, to = L.t;
+    if (focus && L.t === focus) { from = L.t; to = L.s; }
+    let spot = null;
+    if (len(L) * view.k > w * view.k + 24) {
+      for (const t of [.6, .72, .48, .84]) {
+        const cx = from.x + (to.x - from.x) * t, cy = from.y + (to.y - from.y) * t;
+        const b = {x0:cx - w / 2, x1:cx + w / 2, y0:cy - lh / 2, y1:cy + lh / 2};
+        if (!boxes.some(o => b.x0 < o.x1 && b.x1 > o.x0 && b.y0 < o.y1 && b.y1 > o.y0)) { spot = {cx, cy, b}; break; }
+      }
+    }
+    if (spot) { boxes.push(spot.b); L.lbl.setAttribute('visibility', 'visible'); L.lbl.setAttribute('x', spot.cx.toFixed(1)); L.lbl.setAttribute('y', spot.cy.toFixed(1)); }
+    else L.lbl.setAttribute('visibility', 'hidden');
+  }
+}
+function setEdgeLabels(list){
+  gL.textContent = '';
+  edgeLabelList = list.slice(0, 18);
+  for (const L of edgeLabelList) { const t = svgEl('text', {class:'elabel'}); t.textContent = L.label; gL.append(t); L.lbl = t; }
+  placeEdgeLabels();
+}
+function placeThemeLabels(){
+  let gx = 0, gy = 0; for (const n of N) { gx += n.x; gy += n.y; } gx /= N.length; gy /= N.length;
+  for (const t of THEME_ORDER) {
+    const ns = N.filter(n => n.t === t); if (!ns.length) continue;
+    let cx = 0, cy = 0; for (const n of ns) { cx += n.x; cy += n.y + n.dy; } cx /= ns.length; cy /= ns.length;
+    let dx = cx - gx, dy = cy - gy; const d = Math.hypot(dx, dy);
+    if (t === 'method' || d < 60) { dx = 0; dy = -1; } else { dx /= d; dy /= d; }
+    let ext = 0; for (const n of ns) { const p = (n.x - cx) * dx + (n.y + n.dy - cy) * dy + Math.abs(dx) * n.hw + Math.abs(dy) * n.hh; if (p > ext) ext = p; }
+    const T = tLabels[t]; T.x = cx + dx * (ext + 26); T.y = cy + dy * (ext + 22); T.w = textUnits(THEMES[t].short) * 30;
+    T.el.setAttribute('x', T.x.toFixed(1)); T.el.setAttribute('y', T.y.toFixed(1));
+  }
+}
+
+/* ---------- view (pan / zoom) ---------- */
+const view = {k:1, x:0, y:0};
+const KMIN = .16, KMAX = 3.2;
+let viewAnim = 0;
+function applyView(){
+  gRoot.setAttribute('transform', 'translate(' + view.x.toFixed(2) + ' ' + view.y.toFixed(2) + ') scale(' + view.k.toFixed(4) + ')');
+  const fs = 12.5 / Math.pow(view.k, .8);
+  gRoot.style.fontSize = fs.toFixed(2) + 'px';
+  gRoot.style.setProperty('--sw', (fs * .32).toFixed(2) + 'px');
+  const z = view.k < .4 ? 'over' : view.k < .75 ? 'far' : view.k < 1.25 ? 'mid' : 'near';
+  if (svg.dataset.z !== z) svg.dataset.z = z;
+  if (edgeLabelList.length) placeEdgeLabels();
+}
+function svgSize(){ return {W:svg.clientWidth || 1000, H:svg.clientHeight || 700}; }
+let viewTouched = false;
+function zoomAt(p, k2){ viewTouched = true; cancelAnimationFrame(viewAnim); k2 = clamp(k2, KMIN, KMAX); view.x = p.x - (p.x - view.x) * (k2 / view.k); view.y = p.y - (p.y - view.y) * (k2 / view.k); view.k = k2; applyView(); }
+function animateView(target){
+  cancelAnimationFrame(viewAnim);
+  if (reduceMotion) { Object.assign(view, target); applyView(); return; }
+  const from = {k:view.k, x:view.x, y:view.y}, t0 = performance.now(), dur = 520;
+  const step = now => {
+    const u = Math.min(1, (now - t0) / dur), e = u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+    view.k = from.k + (target.k - from.k) * e; view.x = from.x + (target.x - from.x) * e; view.y = from.y + (target.y - from.y) * e;
+    applyView();
+    if (u < 1) viewAnim = requestAnimationFrame(step);
+  };
+  viewAnim = requestAnimationFrame(step);
+}
+function reserved(){ const top = $('#barTop').offsetHeight + 22, bottom = $('#barBottom').offsetHeight + 22; return {top, bottom}; }
+function fitTo(nodes, opt){
+  opt = opt || {};
+  if (!nodes.length) return;
+  const {W, H} = svgSize();
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const n of nodes) { x0 = Math.min(x0, n.x - n.hw); x1 = Math.max(x1, n.x + n.hw); y0 = Math.min(y0, n.y - n.r - 4); y1 = Math.max(y1, n.y + n.dy + n.hh); }
+  if (opt.themes) for (const t of THEME_ORDER) { const T = tLabels[t]; x0 = Math.min(x0, T.x - T.w / 2); x1 = Math.max(x1, T.x + T.w / 2); y0 = Math.min(y0, T.y - 20); y1 = Math.max(y1, T.y + 20); }
+  const R = reserved(), side = 24;
+  const aw = Math.max(80, W - 2 * side), ah = Math.max(80, H - R.top - R.bottom);
+  const k = clamp(Math.min(aw / (x1 - x0), ah / (y1 - y0)), opt.kmin || KMIN, opt.kmax || 1.6);
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  const target = {k, x:side + aw / 2 - cx * k, y:R.top + ah / 2 - cy * k};
+  if (opt.instant) { cancelAnimationFrame(viewAnim); Object.assign(view, target); applyView(); } else { viewTouched = true; animateView(target); }
+}
+const visibleNodes = () => N.filter(n => !state.core || n.l === 1);
+function fitAll(instant){ fitTo(visibleNodes(), {themes:!state.core, instant:!!instant, kmax:1.3}); }
+function fitNeighborhood(n){ fitTo([n].concat(n.nb.map(x => x.n)), {kmin:.55, kmax:1.45}); }
+// after a click in the graph: move the camera only if the neighbourhood is too small to read or partly off-screen
+function ensureReadable(n){
+  const {W, H} = svgSize(), R = reserved();
+  const off = [n].concat(n.nb.map(x => x.n)).some(m => { const sx = m.x * view.k + view.x, sy = m.y * view.k + view.y; return sx < 10 || sx > W - 10 || sy < R.top - 10 || sy > H - R.bottom + 10; });
+  if (view.k < .75 || off) fitNeighborhood(n);
+}
+
+/* ---------- highlight ---------- */
+function ctxNodes(ctx){
+  if (!ctx) return [];
+  if (ctx.type === 'theme') return N.filter(n => n.t === ctx.id);
+  if (ctx.type === 'lecture') return N.filter(n => n.lec.includes(ctx.id));
+  if (ctx.type === 'thread') { const th = THREADS.find(x => x.id === ctx.id); return th ? th.nodes.map(id => byId.get(id)).filter(Boolean) : []; }
+  return [];
+}
+function refresh(){
+  const sel = byId.get(state.sel) || null;
+  const focus = byId.get(state.hover) || sel;
+  let mode = null, inSet = null, hlEdges = null;
+  if (focus) {
+    mode = 'node'; inSet = new Set([focus.id]); hlEdges = new Set();
+    for (const x of focus.nb) { inSet.add(x.n.id); hlEdges.add(x.L); }
+  } else if (state.ctx) {
+    mode = state.ctx.type; inSet = new Set(ctxNodes(state.ctx).map(n => n.id));
+    if (mode === 'thread') hlEdges = new Set(links.filter(L => inSet.has(L.s.id) && inSet.has(L.t.id)));
+  }
+  const strong = mode === 'node' || mode === 'thread';
+  for (const n of N) {
+    const inS = !!inSet && inSet.has(n.id), c = n.g.classList;
+    c.toggle('hidden', state.core && n.l > 1 && !(strong && inS));
+    c.toggle('dim', !!inSet && !inS);
+    c.toggle('hl', strong && inS);
+    c.toggle('sel', !!sel && n === sel);
+  }
+  if (sel) gN.append(sel.g);
+  for (const L of links) {
+    const c = L.el.classList;
+    c.toggle('hidden', L.s.g.classList.contains('hidden') || L.t.g.classList.contains('hidden'));
+    let dim = false, hl = false;
+    if (strong) { hl = hlEdges.has(L); dim = !hl; }
+    else if (inSet) dim = !(inSet.has(L.s.id) || inSet.has(L.t.id));
+    c.toggle('dim', dim); c.toggle('hl', hl);
+  }
+  for (const t of THEME_ORDER) tLabels[t].el.classList.toggle('dim', !!inSet && !(mode === 'theme' && state.ctx.id === t));
+  setEdgeLabels(strong ? Array.from(hlEdges).filter(L => !L.el.classList.contains('hidden')) : []);
+}
+
+/* ---------- panel ---------- */
+const panel = $('#panel');
+const lecChip = c => { const L = LEC.get(c); return '<button type="button" class="lec" data-lec="' + c + '"><b>' + c + '</b>' + esc(L ? L.zh : '') + '</button>'; };
+const nodeChip = (n, cls) => '<button type="button" class="' + (cls || 'chip') + ' t-' + n.t + ' l' + n.l + '" data-go="' + n.id + '"><i class="sw"></i>' + fmt(n.zh) + '</button>';
+function tourBar(){
+  const i = state.tour, step = TOUR[i];
+  const off = state.sel !== step[0];
+  return '<div class="tour"><div class="tour-top"><span>入门路线：第 ' + (i + 1) + ' / ' + TOUR.length + ' 步</span><button type="button" class="textbtn" data-act="tour-exit">退出路线</button></div>' +
+    '<div class="tour-bar"><i style="width:' + ((i + 1) / TOUR.length * 100).toFixed(1) + '%"></i></div>' +
+    '<p class="tour-note">' + fmt(step[1]) + '</p>' +
+    '<div class="tour-nav"><button type="button" class="btn" data-act="tour-prev"' + (i === 0 ? ' disabled' : '') + '>上一步</button>' +
+    '<button type="button" class="btn primary" data-act="tour-next">' + (i === TOUR.length - 1 ? '完成路线' : '下一步') + '</button>' +
+    (off ? '<button type="button" class="textbtn" data-act="tour-back">回到这一步</button>' : '') + '</div></div>';
+}
+function panelNode(n){
+  const th = THEMES[n.t];
+  let h = state.tour !== null ? tourBar() : '';
+  h += '<div class="pn t-' + n.t + '">';
+  h += '<button type="button" class="pn-theme" data-theme="' + n.t + '"><i class="sw"></i>' + esc(th.zh) + '</button>';
+  h += '<h2 class="pn-title" tabindex="-1">' + fmt(n.zh) + '</h2><p class="pn-en en">' + fmt(n.en) + '</p>';
+  h += '<p class="pn-desc">' + fmt(n.d) + '</p>';
+  if (n.p.length) h += '<ul class="pn-pts">' + n.p.map(x => '<li>' + fmt(x) + '</li>').join('') + '</ul>';
+  h += '<h3 class="pn-h">出自课件</h3><div class="lecs">' + n.lec.map(lecChip).join('') + '</div>';
+  const rels = n.nb.slice().sort((a, b) => (a.n.l - b.n.l) || (THEME_ORDER.indexOf(a.n.t) - THEME_ORDER.indexOf(b.n.t)));
+  h += '<h3 class="pn-h">相关概念（' + rels.length + '）</h3><ul class="rels">' + rels.map(x =>
+    '<li><button type="button" class="t-' + x.n.t + '" data-go="' + x.n.id + '" aria-label="' + esc((x.dir === 'out' ? '指向 ' : '来自 ') + x.n.zh + '：' + x.L.label) + '">' +
+    '<span class="dir" aria-hidden="true">' + (x.dir === 'out' ? '→' : '←') + '</span><span class="nm"><i class="sw"></i>' + fmt(x.n.zh) + '</span><span class="lb">' + fmt(x.L.label) + '</span></button></li>').join('') + '</ul>';
+  return h + '</div>';
+}
+function panelWelcome(){
+  const hubs = N.slice().sort((a, b) => b.deg - a.deg).slice(0, 8);
+  return '<div class="pw"><h2 class="pw-title" tabindex="-1">从这里开始</h2>' +
+    '<p>每个圆点是一个概念，连线是它们之间的关系。颜色代表主题；圆点越大，说明它越基础、联系越多。</p>' +
+    '<button type="button" class="btn primary" data-act="tour-start">开始入门路线（' + TOUR.length + ' 步）</button>' +
+    '<h3 class="pn-h">可以这样用</h3><ul class="pw-list"><li>点一个概念：看解释、出处和相关概念</li><li>点图谱底部的主题：只看这一部分</li><li>搜索框里中文、英文、缩写都能搜</li><li>滚轮缩放，拖动空白处平移；放大后会显示更多概念名</li></ul>' +
+    '<h3 class="pn-h">联系最多的概念</h3><div class="chips">' + hubs.map(n => nodeChip(n)).join('') + '</div></div>';
+}
+function panelCtx(ctx){
+  const nodes = ctxNodes(ctx).slice().sort((a, b) => (a.l - b.l) || (a.i - b.i));
+  const back = '<div class="pn-foot"><button type="button" class="btn" data-act="clear-ctx">显示完整图谱</button></div>';
+  if (ctx.type === 'theme') {
+    const th = THEMES[ctx.id];
+    return '<div class="pn t-' + ctx.id + '"><h2 class="pn-title" tabindex="-1"><i class="sw"></i>' + esc(th.zh) + '</h2><p class="pn-en en">' + esc(th.en) + '</p>' +
+      '<p class="pn-desc">' + fmt(th.idea) + '</p><ul class="pn-pts">' + th.pts.map(x => '<li>' + fmt(x) + '</li>').join('') + '</ul>' +
+      '<h3 class="pn-h">对应课件</h3><div class="lecs">' + th.lec.map(lecChip).join('') + '</div>' +
+      '<h3 class="pn-h">本主题的概念（' + nodes.length + '）</h3><div class="chips">' + nodes.map(n => nodeChip(n)).join('') + '</div>' + back + '</div>';
+  }
+  if (ctx.type === 'lecture') {
+    const L = LEC.get(ctx.id);
+    return '<div class="pn"><h2 class="pn-title" tabindex="-1">' + ctx.id + '　' + esc(L.zh) + '</h2><p class="pn-en en">' + esc(L.en) + '</p>' +
+      '<h3 class="pn-h">这一讲涉及的概念（' + nodes.length + '）</h3><div class="chips">' + nodes.map(n => nodeChip(n)).join('') + '</div>' + back + '</div>';
+  }
+  const th = THREADS.find(x => x.id === ctx.id);
+  return '<div class="pn"><h2 class="pn-title" tabindex="-1">' + esc(th.title) + '</h2><p class="pn-desc" style="margin-top:8px">' + fmt(th.text) + '</p>' +
+    '<h3 class="pn-h">串起来的概念</h3><ol class="chain">' + th.nodes.map(id => { const n = byId.get(id); return '<li><button type="button" class="t-' + n.t + '" data-go="' + id + '"><i class="sw"></i>' + fmt(n.zh) + '</button></li>'; }).join('') + '</ol>' + back + '</div>';
+}
+function renderPanel(){
+  const hadFocus = panel.contains(document.activeElement);
+  panel.innerHTML = state.sel ? panelNode(byId.get(state.sel)) : state.ctx ? panelCtx(state.ctx) : panelWelcome();
+  panel.scrollTop = 0;
+  if (hadFocus) { const h = panel.querySelector('h2'); if (h) h.focus({preventScroll:true}); }
+}
+
+/* ---------- peek (narrow screens) ---------- */
+const peek = $('#peek'), narrow = mq('(max-width: 980px)');
+function updatePeek(){
+  const n = byId.get(state.sel);
+  if (!n || !narrow.matches) { peek.hidden = true; return; }
+  $('#peekName').innerHTML = fmt(n.zh); $('#peekEn').innerHTML = fmt(n.en); $('#peekDesc').innerHTML = fmt(firstSentence(n.d));
+  const next = $('#peekNext');
+  next.hidden = state.tour === null;
+  if (state.tour !== null) next.textContent = state.tour === TOUR.length - 1 ? '完成路线' : '下一步 ' + (state.tour + 2) + '/' + TOUR.length;
+  peek.style.bottom = ($('#barBottom').offsetHeight + 18) + 'px';
+  peek.hidden = false;
+}
+
+/* ---------- actions ---------- */
+function syncControls(){
+  const solo = state.ctx && state.ctx.type === 'theme' ? state.ctx.id : null;
+  $('#channels').classList.toggle('solo', !!solo);
+  document.querySelectorAll('#channels .ch').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.theme === solo)));
+  $('#tourBtn').setAttribute('aria-pressed', String(state.tour !== null));
+  $('#coreBtn').setAttribute('aria-pressed', String(state.core));
+}
+function update(){ syncControls(); refresh(); renderPanel(); updatePeek(); }
+function select(id, opt){
+  const n = byId.get(id); if (!n) return;
+  state.sel = id; state.hover = null;
+  update();
+  if (opt && opt.move) fitNeighborhood(n);
+  else if (opt && opt.ensure) ensureReadable(n);
+}
+function clearSel(){ state.sel = null; state.hover = null; state.tour = null; update(); }
+function setCtx(ctx){
+  if (ctx && ((ctx.type === 'theme' && !THEMES[ctx.id]) || (ctx.type === 'lecture' && !LEC.has(ctx.id)) || (ctx.type === 'thread' && !THREADS.some(t => t.id === ctx.id)))) return;
+  state.ctx = ctx; state.sel = null; state.hover = null; state.tour = null;
+  update();
+  if (ctx) fitTo(ctxNodes(ctx), {kmax:1.35}); else fitAll();
+}
+function tourGo(i){
+  state.tour = clamp(i, 0, TOUR.length - 1); state.ctx = null; state.hover = null; state.sel = TOUR[state.tour][0];
+  update(); fitNeighborhood(byId.get(state.sel));
+}
+function tourEnd(){ state.tour = null; state.sel = null; update(); fitAll(); }
+function scrollToMap(){ $('#map').scrollIntoView({behavior:reduceMotion ? 'auto' : 'smooth', block:'start'}); }
+function setMode(){
+  const dark = document.documentElement.dataset.scheme ? document.documentElement.dataset.scheme === 'dark' : mq('(prefers-color-scheme: dark)').matches;
+  const next = dark ? 'light' : 'dark';
+  document.documentElement.dataset.scheme = next; store.set('pon3-theme', next); syncModeBtn();
+}
+function syncModeBtn(){
+  const dark = document.documentElement.dataset.scheme ? document.documentElement.dataset.scheme === 'dark' : mq('(prefers-color-scheme: dark)').matches;
+  const b = $('#modeBtn'); b.textContent = dark ? '浅色' : '深色'; b.setAttribute('aria-label', dark ? '切换到浅色模式' : '切换到深色模式');
+}
+function act(name){
+  const {W, H} = svgSize();
+  switch (name) {
+    case 'tour-start': tourGo(0); break;
+    case 'tour-toggle': state.tour !== null ? tourEnd() : tourGo(0); break;
+    case 'tour-next': state.tour < TOUR.length - 1 ? tourGo(state.tour + 1) : tourEnd(); break;
+    case 'tour-prev': if (state.tour > 0) tourGo(state.tour - 1); break;
+    case 'tour-back': tourGo(state.tour); break;
+    case 'tour-exit': tourEnd(); break;
+    case 'clear-ctx': setCtx(null); break;
+    case 'core': state.core = !state.core; update(); if (!state.sel) fitAll(); break;
+    case 'zoom-in': zoomAt({x:W / 2, y:H / 2}, view.k * 1.4); break;
+    case 'zoom-out': zoomAt({x:W / 2, y:H / 2}, view.k / 1.4); break;
+    case 'zoom-fit': fitAll(); break;
+    case 'peek-more': panel.scrollIntoView({behavior:reduceMotion ? 'auto' : 'smooth', block:'start'}); break;
+    case 'mode': setMode(); break;
+    case 'q-prev': quizMove(-1); break;
+    case 'q-next': quizMove(1); break;
+    case 'q-flip': quizFlip(); break;
+    case 'q-shuffle': quizShuffle(); break;
+  }
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-go],[data-lec],[data-theme],[data-thread],[data-act],[data-qf]');
+  if (!b || b === document.documentElement || b === document.body || svg.contains(b)) return;
+  const inMap = $('#map').contains(b);
+  if (b.dataset.go) { if (!inMap) scrollToMap(); select(b.dataset.go, {move:true}); return; }
+  if (b.dataset.lec) { if (!inMap) scrollToMap(); setCtx({type:'lecture', id:b.dataset.lec}); return; }
+  if (b.dataset.theme) {
+    const fromChannels = !!b.closest('#channels');
+    if (!inMap) scrollToMap();
+    if (fromChannels && state.ctx && state.ctx.type === 'theme' && state.ctx.id === b.dataset.theme) setCtx(null);
+    else setCtx({type:'theme', id:b.dataset.theme});
+    return;
+  }
+  if (b.dataset.thread) { scrollToMap(); setCtx({type:'thread', id:b.dataset.thread}); return; }
+  if (b.dataset.qf) { quizSet(b.dataset.qf); return; }
+  if (b.dataset.act) act(b.dataset.act);
+});
+
+/* ---------- pointer interaction on the graph ---------- */
+const pointers = new Map();
+let drag = null;
+const local = e => { const r = svg.getBoundingClientRect(); return {x:e.clientX - r.left, y:e.clientY - r.top}; };
+const toWorld = p => ({x:(p.x - view.x) / view.k, y:(p.y - view.y) / view.k});
+function nearest(p, maxPx){
+  let best = null, bd = Infinity;
+  for (const n of N) {
+    if (n.g.classList.contains('hidden')) continue;
+    const sx = n.x * view.k + view.x, sy = n.y * view.k + view.y;
+    const d = Math.hypot(sx - p.x, sy - p.y) - n.r * view.k;
+    if (d < bd) { bd = d; best = n; }
+  }
+  return bd <= maxPx ? best : null;
+}
+svg.addEventListener('pointerdown', e => {
+  if (e.button !== undefined && e.button > 0) return;
+  cancelAnimationFrame(viewAnim);
+  try { svg.setPointerCapture(e.pointerId); } catch (err) {}
+  const p = local(e);
+  pointers.set(e.pointerId, p);
+  if (pointers.size === 2) {
+    if (drag && drag.type === 'node' && drag.moved) { drag.n.fx = drag.n.fy = null; sim.cool(); }
+    const [a, b] = Array.from(pointers.values());
+    drag = {type:'pinch', d0:Math.hypot(a.x - b.x, a.y - b.y) || 1, k0:view.k, w0:toWorld({x:(a.x + b.x) / 2, y:(a.y + b.y) / 2})};
+    return;
+  }
+  const g = e.target.closest('.node');
+  drag = g ? {type:'node', n:byId.get(g.dataset.id), start:p, moved:false} : {type:'pan', start:p, v0:{x:view.x, y:view.y}, moved:false};
+  if (state.hover) { state.hover = null; refresh(); }
+});
+svg.addEventListener('pointermove', e => {
+  if (!pointers.has(e.pointerId)) return;
+  const p = local(e); pointers.set(e.pointerId, p);
+  if (!drag) return;
+  if (drag.type === 'pinch') {
+    if (pointers.size < 2) return;
+    const [a, b] = Array.from(pointers.values());
+    const k = clamp(drag.k0 * Math.hypot(a.x - b.x, a.y - b.y) / drag.d0, KMIN, KMAX);
+    const m = {x:(a.x + b.x) / 2, y:(a.y + b.y) / 2};
+    viewTouched = true; view.k = k; view.x = m.x - drag.w0.x * k; view.y = m.y - drag.w0.y * k; applyView();
+    return;
+  }
+  const dist = Math.hypot(p.x - drag.start.x, p.y - drag.start.y);
+  if (drag.type === 'node') {
+    if (!drag.moved && dist > 4) { drag.moved = true; svg.classList.add('grabbing'); sim.heat(.12); }
+    if (drag.moved) { const w = toWorld(p); drag.n.fx = w.x; drag.n.fy = w.y; }
+  } else if (drag.type === 'pan') {
+    if (!drag.moved && dist > 4) { drag.moved = true; svg.classList.add('grabbing'); }
+    if (drag.moved) { viewTouched = true; view.x = drag.v0.x + p.x - drag.start.x; view.y = drag.v0.y + p.y - drag.start.y; applyView(); }
+  }
+});
+function endPointer(e){
+  if (!pointers.has(e.pointerId)) return;
+  const p = local(e); pointers.delete(e.pointerId);
+  svg.classList.remove('grabbing');
+  if (!drag) return;
+  if (drag.type === 'pinch') { if (pointers.size === 0) drag = null; return; }
+  if (e.type === 'pointercancel') { if (drag.type === 'node' && drag.moved) { drag.n.fx = drag.n.fy = null; sim.cool(); } drag = null; return; }
+  if (drag.type === 'node') {
+    if (drag.moved) { drag.n.fx = drag.n.fy = null; sim.cool(); }
+    else if (state.sel === drag.n.id && state.tour === null) clearSel();
+    else select(drag.n.id, {ensure:true});
+  } else if (drag.type === 'pan' && !drag.moved) {
+    const n = nearest(p, 14);
+    if (n) select(n.id, {ensure:true}); else if (state.sel) clearSel();
+  }
+  drag = null;
+}
+svg.addEventListener('pointerup', endPointer);
+svg.addEventListener('pointercancel', endPointer);
+svg.addEventListener('wheel', e => {
+  e.preventDefault();
+  const unit = e.deltaMode === 1 ? 0.05 : e.deltaMode === 2 ? 1 : 0.0016;
+  zoomAt(local(e), view.k * Math.exp(-e.deltaY * unit * (e.ctrlKey ? 2.2 : 1)));
+}, {passive:false});
+gN.addEventListener('pointerover', e => {
+  if (e.pointerType !== 'mouse' || drag) return;
+  const g = e.target.closest('.node'); if (!g || g.classList.contains('dim') && state.sel) return;
+  if (state.hover !== g.dataset.id) { state.hover = g.dataset.id; refresh(); }
+});
+gN.addEventListener('pointerout', e => {
+  if (e.pointerType !== 'mouse') return;
+  const g = e.target.closest('.node');
+  if (g && !(e.relatedTarget && g.contains(e.relatedTarget)) && state.hover) { state.hover = null; refresh(); }
+});
+
+/* ---------- search ---------- */
+const qi = $('#q'), qr = $('#qres');
+let qItems = [], qActive = 0;
+function searchNodes(term){
+  term = term.trim().toLowerCase(); if (!term) return [];
+  const scored = [];
+  for (const n of N) {
+    const fields = [n.zh, n.en].concat(n.a).map(s => s.toLowerCase());
+    let best = 9;
+    for (const f of fields) { if (f === term) best = Math.min(best, 0); else if (f.startsWith(term)) best = Math.min(best, 1); else if (f.includes(term)) best = Math.min(best, 2); }
+    if (best < 9) scored.push([best, n.l, n.i, n]);
+  }
+  scored.sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]);
+  return scored.slice(0, 8).map(x => x[3]);
+}
+function renderResults(){
+  if (!qi.value.trim()) { qr.hidden = true; qi.setAttribute('aria-expanded', 'false'); return; }
+  qr.innerHTML = qItems.length ? qItems.map((n, i) => '<li role="option" id="qo' + i + '" class="t-' + n.t + (i === qActive ? ' active' : '') + '" aria-selected="' + (i === qActive) + '" data-id="' + n.id + '"><i class="sw"></i><span>' + fmt(n.zh) + '</span><span class="en">' + fmt(n.en) + '</span></li>').join('')
+    : '<li class="none">没有找到匹配的概念，换个关键词试试</li>';
+  qr.hidden = false; qi.setAttribute('aria-expanded', 'true');
+  if (qItems.length) qi.setAttribute('aria-activedescendant', 'qo' + qActive); else qi.removeAttribute('aria-activedescendant');
+}
+function chooseResult(n){ qi.value = ''; qItems = []; renderResults(); qi.blur(); select(n.id, {move:true}); }
+qi.addEventListener('input', () => { qItems = searchNodes(qi.value); qActive = 0; renderResults(); });
+qi.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown' && qItems.length) { e.preventDefault(); qActive = (qActive + 1) % qItems.length; renderResults(); }
+  else if (e.key === 'ArrowUp' && qItems.length) { e.preventDefault(); qActive = (qActive - 1 + qItems.length) % qItems.length; renderResults(); }
+  else if (e.key === 'Enter' && qItems.length) { e.preventDefault(); chooseResult(qItems[qActive]); }
+  else if (e.key === 'Escape') { qi.value = ''; qItems = []; renderResults(); qi.blur(); }
+});
+qi.addEventListener('blur', () => setTimeout(() => { qr.hidden = true; qi.setAttribute('aria-expanded', 'false'); }, 120));
+qi.addEventListener('focus', () => { if (qi.value.trim()) renderResults(); });
+qr.addEventListener('mousedown', e => e.preventDefault());
+qr.addEventListener('click', e => { const li = e.target.closest('li[data-id]'); if (li) chooseResult(byId.get(li.dataset.id)); });
+
+document.addEventListener('keydown', e => {
+  const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement && document.activeElement.tagName);
+  if (e.key === '/' && !typing) { e.preventDefault(); qi.focus(); return; }
+  if (typing) return;
+  if (e.key === 'Escape') { if (state.sel || state.tour !== null) clearSel(); else if (state.ctx) setCtx(null); }
+  if (state.tour !== null && !e.target.closest('#quizBox')) {
+    if (e.key === 'ArrowRight') act('tour-next');
+    else if (e.key === 'ArrowLeft') act('tour-prev');
+  }
+});
+
+/* ---------- channels ---------- */
+$('#channels').innerHTML = THEME_ORDER.map(t => '<button type="button" class="ch t-' + t + '" data-theme="' + t + '" aria-pressed="false" title="' + esc(THEMES[t].zh) + '"><i class="led"></i>' + esc(THEMES[t].short) + '</button>').join('');
+
+/* ---------- course raster & slides ---------- */
+(function buildCourse(){
+  const el = $('#raster'); el.style.setProperty('--cols', LECTURES.length);
+  const count = (t, c) => N.filter(n => n.t === t && n.lec.includes(c)).length;
+  let h = '<span></span>';
+  for (const [c, , zh] of LECTURES) h += '<button type="button" class="rs-col" data-lec="' + c + '" aria-label="第 ' + c + ' 讲：' + esc(zh) + '">' + c + '</button>';
+  for (const t of THEME_ORDER) {
+    h += '<button type="button" class="rs-row t-' + t + '" data-theme="' + t + '"><i class="sw"></i>' + esc(THEMES[t].short) + '</button>';
+    for (const [c] of LECTURES) { const k = count(t, c); h += '<span class="rs-cell t-' + t + '" data-lec="' + c + '">' + (k ? '<i class="tick" style="--h:' + Math.min(1, .22 + k * .16).toFixed(2) + '"></i>' : '') + '</span>'; }
+  }
+  el.innerHTML = h;
+  const cap = $('#rasterCap');
+  const capDefault = '把鼠标移到某一列上查看讲题；点击这一列，在图谱里只看这一讲的概念。';
+  cap.textContent = capDefault;
+  let on = null;
+  const hl = c => {
+    if (on === c) return; on = c;
+    el.querySelectorAll('.on').forEach(x => x.classList.remove('on'));
+    if (!c) { cap.textContent = capDefault; return; }
+    el.querySelectorAll('[data-lec="' + c + '"]').forEach(x => x.classList.add('on'));
+    const L = LEC.get(c), ns = N.filter(n => n.lec.includes(c));
+    const by = {}; ns.forEach(n => { by[n.t] = (by[n.t] || 0) + 1; });
+    const main = Object.keys(by).sort((a, b) => by[b] - by[a])[0];
+    cap.innerHTML = '<b>' + c + '　' + esc(L.zh) + '</b>（<span class="en">' + esc(L.en) + '</span>）：涉及 ' + ns.length + ' 个概念，主要属于“' + esc(THEMES[main].short) + '”。';
+  };
+  el.addEventListener('pointerover', e => { const x = e.target.closest('[data-lec]'); hl(x ? x.dataset.lec : null); });
+  el.addEventListener('pointerleave', () => hl(null));
+  el.addEventListener('focusin', e => { const x = e.target.closest('[data-lec]'); if (x) hl(x.dataset.lec); });
+  el.addEventListener('focusout', () => hl(null));
+
+  $('#slides').innerHTML = THEME_ORDER.map(t => {
+    const th = THEMES[t], ns = N.filter(n => n.t === t).sort((a, b) => (a.l - b.l) || (a.i - b.i));
+    return '<article class="slide t-' + t + '"><div class="slide-label" aria-hidden="true">' + th.lec.map(c => '<span>' + c + '</span>').join('') + '</div>' +
+      '<div class="slide-body"><h3>' + esc(th.zh) + '</h3><p class="slide-en en">' + esc(th.en) + '</p><p class="idea">' + fmt(th.idea) + '</p>' +
+      '<ul>' + th.pts.map(p => '<li>' + fmt(p) + '</li>').join('') + '</ul>' +
+      '<div class="slide-lecs">' + th.lec.map(lecChip).join('') + '</div>' +
+      '<div class="chips">' + ns.map(n => '<button type="button" class="chip t-' + t + ' l' + n.l + '" data-go="' + n.id + '">' + fmt(n.zh) + '</button>').join('') + '</div></div></article>';
+  }).join('');
+})();
+
+/* ---------- threads ---------- */
+$('#threadList').innerHTML = THREADS.map(th => '<article class="thread"><h3>' + esc(th.title) + '</h3><p>' + fmt(th.text) + '</p><div class="path">' +
+  th.nodes.map((id, i) => { const n = byId.get(id); return (i ? '<span class="pedge" aria-hidden="true"></span>' : '') + '<button type="button" class="pnode t-' + n.t + '" data-go="' + id + '"><i class="sw"></i>' + fmt(n.zh) + '</button>'; }).join('') +
+  '</div><button type="button" class="textbtn" data-thread="' + th.id + '">在图谱中查看这条主线</button></article>').join('');
+
+/* ---------- quiz ---------- */
+const quiz = {filter:'all', order:[], pos:0, flipped:false};
+const flash = $('#flash'), qFront = $('#qFront'), qBack = $('#qBack');
+(function buildQf(){
+  const counts = {}; CARDS.forEach(c => { counts[c.t] = (counts[c.t] || 0) + 1; });
+  $('#qfilter').innerHTML = '<button type="button" class="qf" data-qf="all" aria-pressed="true">全部（' + CARDS.length + '）</button>' +
+    THEME_ORDER.filter(t => counts[t]).map(t => '<button type="button" class="qf t-' + t + '" data-qf="' + t + '" aria-pressed="false"><i class="sw"></i>' + esc(THEMES[t].short) + '（' + counts[t] + '）</button>').join('');
+})();
+function quizSet(filter){
+  quiz.filter = filter;
+  quiz.order = CARDS.map((c, i) => i).filter(i => filter === 'all' || CARDS[i].t === filter);
+  quiz.pos = 0;
+  document.querySelectorAll('#qfilter .qf').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.qf === filter)));
+  quizShow();
+}
+function quizShow(){
+  const c = CARDS[quiz.order[quiz.pos]], th = THEMES[c.t];
+  flash.classList.add('noanim'); quiz.flipped = false; flash.classList.remove('flipped');
+  flash.setAttribute('aria-pressed', 'false'); qFront.removeAttribute('aria-hidden'); qBack.setAttribute('aria-hidden', 'true');
+  qFront.innerHTML = '<p class="q-meta t-' + c.t + '"><i class="sw"></i>' + esc(th.short) + '</p><p class="q-text">' + fmt(c.q) + '</p><p class="q-hint">想好答案后，点击卡片或按空格键翻面</p>';
+  qBack.innerHTML = '<p class="q-meta t-' + c.t + '"><i class="sw"></i>参考答案</p><p class="a-text">' + fmt(c.a) + '</p>';
+  $('#qPos').textContent = (quiz.pos + 1) + ' / ' + quiz.order.length;
+  const n = byId.get(c.n);
+  $('#qRel').innerHTML = n ? '相关概念：<button type="button" class="textbtn" data-go="' + n.id + '">' + fmt(n.zh) + '</button>' : '';
+  requestAnimationFrame(() => requestAnimationFrame(() => flash.classList.remove('noanim')));
+}
+function quizFlip(){
+  quiz.flipped = !quiz.flipped;
+  flash.classList.toggle('flipped', quiz.flipped); flash.setAttribute('aria-pressed', String(quiz.flipped));
+  if (quiz.flipped) { qFront.setAttribute('aria-hidden', 'true'); qBack.removeAttribute('aria-hidden'); }
+  else { qBack.setAttribute('aria-hidden', 'true'); qFront.removeAttribute('aria-hidden'); }
+}
+function quizMove(d){ quiz.pos = (quiz.pos + d + quiz.order.length) % quiz.order.length; quizShow(); }
+function quizShuffle(){ const o = quiz.order; for (let i = o.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [o[i], o[j]] = [o[j], o[i]]; } quiz.pos = 0; quizShow(); }
+flash.addEventListener('click', quizFlip);
+flash.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); quizFlip(); } });
+$('#quizBox').addEventListener('keydown', e => {
+  if (/^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+  if (e.key === 'ArrowRight') { e.preventDefault(); quizMove(1); } else if (e.key === 'ArrowLeft') { e.preventDefault(); quizMove(-1); }
+});
+quizSet('all');
+
+/* ---------- glossary ---------- */
+(function buildGlossary(){
+  const rows = N.slice().sort((a, b) => a.en.localeCompare(b.en, 'en', {sensitivity:'base'}));
+  const list = $('#glList');
+  list.innerHTML = rows.map(n => '<li data-s="' + esc(n.key) + '"><button type="button" class="gl-row t-' + n.t + '" data-go="' + n.id + '"><span class="gl-en en">' + fmt(n.en) + '</span><span class="gl-zh"><i class="sw"></i>' + fmt(n.zh) + '</span><span class="gl-def">' + fmt(firstSentence(n.d)) + '</span></button></li>').join('') +
+    '<li class="gl-empty" hidden>没有匹配的概念。</li>';
+  $('#abbrList').innerHTML = ABBR.map(([ab, en, zh]) => '<div class="ab" data-s="' + esc((ab + ' ' + en + ' ' + zh).toLowerCase()) + '"><b>' + fmt(ab) + '</b><span><span class="en">' + fmt(en) + '</span><br>' + fmt(zh) + '</span></div>').join('');
+  const input = $('#glq'), countEl = $('#glCount'), empty = list.querySelector('.gl-empty');
+  const filter = () => {
+    const q = input.value.trim().toLowerCase(); let shown = 0;
+    list.querySelectorAll('li[data-s]').forEach(li => { const ok = !q || li.dataset.s.includes(q); li.hidden = !ok; if (ok) shown++; });
+    let ab = 0; document.querySelectorAll('#abbrList .ab').forEach(d => { const ok = !q || d.dataset.s.includes(q); d.hidden = !ok; if (ok) ab++; });
+    empty.hidden = shown > 0;
+    countEl.textContent = q ? '找到 ' + shown + ' 个概念、' + ab + ' 个缩写' : '共 ' + N.length + ' 个概念、' + ABBR.length + ' 个缩写';
+  };
+  input.addEventListener('input', filter); filter();
+})();
+
+/* ---------- init ---------- */
+(function init(){
+  const {W, H} = svgSize();
+  const layout = (w, h) => { initLayout(w, h); sim.alpha = 1; for (let i = 0; i < 320; i++) sim.tick(); sim.alpha = 0; render(); placeThemeLabels(); };
+  layout(W, H); fitAll(true);
+  update(); syncModeBtn();
+  if (!reduceMotion) {
+    N.forEach(n => n.g.classList.add('pre')); gE.classList.add('pre'); gT.classList.add('pre');
+    const order = ['basic','plast','mem','reward','sys','degen','dev','inhib','method'];
+    order.forEach((t, i) => setTimeout(() => N.forEach(n => { if (n.t === t) n.g.classList.remove('pre'); }), 150 + i * 120));
+    setTimeout(() => { gE.classList.remove('pre'); gT.classList.remove('pre'); }, 150 + order.length * 120);
+  }
+  let last = {W, H};
+  const onResize = () => {
+    const s = svgSize(); if (s.W === last.W && s.H === last.H) return;
+    if (!viewTouched && !sim.running && !drag) {
+      // nothing has been moved yet: re-run the layout if the orientation flipped, then fit again
+      if ((s.W / s.H >= 1.05) !== (last.W / last.H >= 1.05)) { seed = 20260527; layout(s.W, s.H); }
+      fitAll(true);
+    } else { view.x += (s.W - last.W) / 2; view.y += (s.H - last.H) / 2; applyView(); }
+    last = s; updatePeek();
+  };
+  if (window.ResizeObserver) new ResizeObserver(onResize).observe(svg); else window.addEventListener('resize', onResize);
+  const cs = mq('(prefers-color-scheme: dark)'); if (cs.addEventListener) cs.addEventListener('change', syncModeBtn);
+})();
+})();
+</script>
+</body>
+</html>
